@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.OLDER;
-import static com.n26.usecase.savetransaction.SaveTransactionResponse.SUCCESS;
+import static com.n26.usecase.savetransaction.SaveTransactionResponse.PROCESSED;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 class SaveTransactionTest {
@@ -33,6 +33,6 @@ class SaveTransactionTest {
 
     final SaveTransactionResponse actual = saveTransaction.save(request);
 
-    Assertions.assertThat(actual).isSameAs(SUCCESS);
+    Assertions.assertThat(actual).isSameAs(PROCESSED);
   }
 }

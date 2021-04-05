@@ -1,7 +1,6 @@
 package com.n26.domain;
 
-import com.n26.domain.exception.WrongTimeStampException;
-import org.assertj.core.api.Assertions;
+import com.n26.domain.exception.WrongTransactionTimeStampException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,6 +11,8 @@ import java.util.stream.Stream;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TransactionTimeStampTest {
 
@@ -19,17 +20,17 @@ class TransactionTimeStampTest {
   @MethodSource("getWrongTimeStamps")
   void shouldFailWhenOffsetIsOlderThan60s(OffsetDateTime wrongTimeStamp) {
 
-    Assertions
-        .assertThatThrownBy(() -> new TransactionTimeStamp(wrongTimeStamp))
-        .isInstanceOf(WrongTimeStampException.class);
+    assertThatThrownBy(() -> new TransactionTimeStamp(wrongTimeStamp))
+        .isInstanceOf(WrongTransactionTimeStampException.class);
   }
 
   @Test
   void shouldCreateTransactionTimeStampFromOkTime() {
     final TransactionTimeStamp transactionTimeStamp = new TransactionTimeStamp(OffsetDateTime.now());
 
-    Assertions.assertThat(transactionTimeStamp).isEqualToComparingFieldByField(transactionTimeStamp);
-    Assertions.assertThat(transactionTimeStamp).isNotEqualTo(new TransactionTimeStamp(OffsetDateTime.now()));
+    assertThat(transactionTimeStamp)
+        .isEqualToComparingFieldByField(transactionTimeStamp)
+        .isNotEqualTo(new TransactionTimeStamp(OffsetDateTime.now()));
   }
 
   private static Stream<Arguments> getWrongTimeStamps() {
