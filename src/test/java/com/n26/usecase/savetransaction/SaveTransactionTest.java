@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.OLDER;
+import static com.n26.usecase.savetransaction.SaveTransactionResponse.SUCCESS;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 class SaveTransactionTest {
 
@@ -20,5 +22,17 @@ class SaveTransactionTest {
     final SaveTransactionResponse actual = saveTransaction.save(request);
 
     Assertions.assertThat(actual).isSameAs(OLDER);
+  }
+
+  @Test
+  void shouldReturnSuccessWhenTransactionIsOk() {
+    final BigDecimal amount = new BigDecimal("12.3343");
+    final OffsetDateTime timeStamp = OffsetDateTime.now().minus(40, SECONDS);
+    final SaveTransactionRequest request = new SaveTransactionRequest(amount, timeStamp);
+    final SaveTransaction saveTransaction = new SaveTransaction();
+
+    final SaveTransactionResponse actual = saveTransaction.save(request);
+
+    Assertions.assertThat(actual).isSameAs(SUCCESS);
   }
 }
