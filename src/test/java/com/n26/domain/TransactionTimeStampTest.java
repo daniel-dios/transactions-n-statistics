@@ -1,5 +1,6 @@
 package com.n26.domain;
 
+import com.n26.domain.exception.FutureTimeStampException;
 import com.n26.domain.exception.OldTimeStampException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

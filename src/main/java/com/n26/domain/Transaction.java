@@ -1,6 +1,6 @@
 package com.n26.domain;
 
-public class Transaction {
+public final class Transaction {
   private final Amount amount;
   private final TransactionTimeStamp timeStamp;
 

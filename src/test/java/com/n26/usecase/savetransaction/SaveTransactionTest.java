@@ -6,11 +6,15 @@ import com.n26.domain.Transaction;
 import com.n26.domain.TransactionRepository;
 import com.n26.domain.TransactionTimeStamp;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.stream.Stream;
 
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.FUTURE;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.OLDER;
@@ -24,49 +28,48 @@ import static org.mockito.Mockito.when;
 
 class SaveTransactionTest {
 
-  private static final OffsetDateTime TIME_STAMP = OffsetDateTime.now();
+  private static final OffsetDateTime OCCURRED_AT = OffsetDateTime.now();
   private static final BigDecimal AMOUNT = new BigDecimal("12.3343");
-  private static final SaveTransactionRequest REQUEST = new SaveTransactionRequest(AMOUNT, TIME_STAMP);
 
   private final TimeService timeService = Mockito.mock(TimeService.class);
   private final TransactionRepository transactionRepository = Mockito.mock(TransactionRepository.class);
   private final SaveTransaction saveTransaction = new SaveTransaction(timeService, transactionRepository);
 
-  @Test
-  void shouldReturnOlderWhenTransactionIsOlder() {
-    when(timeService.getCurrentTime()).thenReturn(TIME_STAMP.plus(Duration.ofSeconds(61)));
+  @ParameterizedTest
+  @MethodSource("getInputOutPut")
+  void shouldReturnExpectedAndNotPersistWhenRequestIsOutOfRange(
+      SaveTransactionRequest outOfRangeRequest,
+      SaveTransactionResponse expected) {
+    when(timeService.getCurrentTime()).thenReturn(OCCURRED_AT);
 
-    final SaveTransactionResponse actual = saveTransaction.save(REQUEST);
+    final SaveTransactionResponse actual = saveTransaction.save(outOfRangeRequest);
 
-    assertThat(actual).isSameAs(OLDER);
+    assertThat(actual).isSameAs(expected);
     verify(transactionRepository, never()).save(any(Transaction.class));
   }
 
   @Test
-  void shouldReturnSuccessWhenTransactionIsInTheRange() {
-    final OffsetDateTime timeStampInRange = TIME_STAMP.plus(Duration.ofSeconds(2));
-    when(timeService.getCurrentTime()).thenReturn(timeStampInRange);
+  void shouldReturnProcessedAndPersistTransactionWhenTransactionIsInTheRange() {
+    when(timeService.getCurrentTime()).thenReturn(OCCURRED_AT);
+    final OffsetDateTime timeStampInRange = OCCURRED_AT.minus(Duration.ofSeconds(1));
 
-    final SaveTransactionResponse actual = saveTransaction.save(REQUEST);
+    final SaveTransactionResponse actual = saveTransaction.save(new SaveTransactionRequest(AMOUNT, timeStampInRange));
 
     assertThat(actual).isSameAs(PROCESSED);
-    final Amount expectedAmount = new Amount(AMOUNT);
-    final TransactionTimeStamp expectedTimeStamp = new TransactionTimeStamp(TIME_STAMP, timeStampInRange);
     verify(transactionRepository).save(
         argThat(transaction -> {
-          assertThat(transaction.getAmount()).isEqualToComparingFieldByField(expectedAmount);
-          assertThat(transaction.getTimeStamp()).isEqualToComparingFieldByField(expectedTimeStamp);
+          assertThat(transaction.getAmount())
+              .isEqualToComparingFieldByField(new Amount(AMOUNT));
+          assertThat(transaction.getTimeStamp())
+              .isEqualToComparingFieldByField(new TransactionTimeStamp(timeStampInRange, OCCURRED_AT));
           return true;
         }));
   }
 
-  @Test
-  void shouldReturnFutureWhenTransactionIsInTheFuture() {
-    when(timeService.getCurrentTime()).thenReturn(TIME_STAMP.minus(Duration.ofSeconds(2)));
-
-    final SaveTransactionResponse actual = saveTransaction.save(REQUEST);
-
-    assertThat(actual).isSameAs(FUTURE);
-    verify(transactionRepository, never()).save(any(Transaction.class));
+  private static Stream<Arguments> getInputOutPut() {
+    return Stream.of(
+        Arguments.of(new SaveTransactionRequest(AMOUNT, OCCURRED_AT.minus(Duration.ofSeconds(61))), OLDER),
+        Arguments.of(new SaveTransactionRequest(AMOUNT, OCCURRED_AT.plus(Duration.ofSeconds(1))), FUTURE)
+    );
   }
 }

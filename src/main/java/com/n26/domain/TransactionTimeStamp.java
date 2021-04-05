@@ -1,11 +1,12 @@
 package com.n26.domain;
 
+import com.n26.domain.exception.FutureTimeStampException;
 import com.n26.domain.exception.OldTimeStampException;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
 
-public class TransactionTimeStamp {
+public final class TransactionTimeStamp {
   private static final Duration OLD_RANGE = Duration.ofSeconds(60);
   private final OffsetDateTime timeStamp;
 
