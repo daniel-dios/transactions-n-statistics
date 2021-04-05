@@ -1,7 +1,7 @@
 package com.n26.domain;
 
-import com.n26.domain.exception.FutureTimestampException;
-import com.n26.domain.exception.OldTimestampException;
+import com.n26.domain.exception.FutureTransactionTimestampException;
+import com.n26.domain.exception.OldTransactionTimestampException;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -13,12 +13,13 @@ public final class TransactionTimestamp {
   public TransactionTimestamp(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
     checkOldRange(timestamp, occurredAt);
     checkFutureRange(timestamp, occurredAt);
+
     this.timestamp = timestamp;
   }
 
   private void checkOldRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
     if (isOlderRange(timestamp, occurredAt)) {
-      throw new OldTimestampException();
+      throw new OldTransactionTimestampException();
     }
   }
 
@@ -28,7 +29,7 @@ public final class TransactionTimestamp {
 
   private void checkFutureRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
     if (isFutureRange(timestamp, occurredAt)) {
-      throw new FutureTimestampException();
+      throw new FutureTransactionTimestampException();
     }
   }
 

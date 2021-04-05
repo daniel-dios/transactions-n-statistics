@@ -1,7 +1,7 @@
 package com.n26.domain;
 
-import com.n26.domain.exception.FutureTimestampException;
-import com.n26.domain.exception.OldTimestampException;
+import com.n26.domain.exception.FutureTransactionTimestampException;
+import com.n26.domain.exception.OldTransactionTimestampException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,7 +22,7 @@ class TransactionTimestampTest {
   void shouldFailWhenOffsetIsOlderThan60s(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
 
     assertThatThrownBy(() -> new TransactionTimestamp(timestamp, occurredAt))
-        .isInstanceOf(OldTimestampException.class);
+        .isInstanceOf(OldTransactionTimestampException.class);
   }
 
   @ParameterizedTest
@@ -40,7 +40,7 @@ class TransactionTimestampTest {
   void shouldFailWhenOffsetIsAfterOccurredAt(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
 
     assertThatThrownBy(() -> new TransactionTimestamp(timestamp, occurredAt))
-        .isInstanceOf(FutureTimestampException.class);
+        .isInstanceOf(FutureTransactionTimestampException.class);
   }
 
   private static Stream<Arguments> getInputsOutOf60Seconds() {
