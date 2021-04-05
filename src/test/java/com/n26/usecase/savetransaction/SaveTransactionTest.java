@@ -1,50 +1,51 @@
 package com.n26.usecase.savetransaction;
 
+import com.n26.domain.TimeService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.FUTURE;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.OLDER;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.PROCESSED;
-import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.mockito.Mockito.when;
 
 class SaveTransactionTest {
 
-  @Test
-  void shouldReturnOlderWhenTransactionIsOlderThan60s() {
-    final BigDecimal amount = new BigDecimal("12.3343");
-    final OffsetDateTime timeStamp = OffsetDateTime.parse("2018-07-17T09:59:51.312Z");
-    final SaveTransactionRequest request = new SaveTransactionRequest(amount, timeStamp);
-    final SaveTransaction saveTransaction = new SaveTransaction();
+  private static final BigDecimal AMOUNT = new BigDecimal("12.3343");
+  private static final OffsetDateTime TIME_STAMP = OffsetDateTime.now();
+  private static final SaveTransactionRequest REQUEST = new SaveTransactionRequest(AMOUNT, TIME_STAMP);
 
-    final SaveTransactionResponse actual = saveTransaction.save(request);
+  private final TimeService timeService = Mockito.mock(TimeService.class);
+  private final SaveTransaction saveTransaction = new SaveTransaction(timeService);
+
+  @Test
+  void shouldReturnOlderWhenTransactionIsOlder() {
+    when(timeService.getCurrentTime()).thenReturn(TIME_STAMP.plus(Duration.ofSeconds(61)));
+
+    final SaveTransactionResponse actual = saveTransaction.save(REQUEST);
 
     Assertions.assertThat(actual).isSameAs(OLDER);
   }
 
   @Test
-  void shouldReturnSuccessWhenTransactionIsOk() {
-    final BigDecimal amount = new BigDecimal("12.3343");
-    final OffsetDateTime timeStamp = OffsetDateTime.now().minus(40, SECONDS);
-    final SaveTransactionRequest request = new SaveTransactionRequest(amount, timeStamp);
-    final SaveTransaction saveTransaction = new SaveTransaction();
+  void shouldReturnSuccessWhenTransactionIsInTheRange() {
+    when(timeService.getCurrentTime()).thenReturn(TIME_STAMP.plus(Duration.ofSeconds(2)));
 
-    final SaveTransactionResponse actual = saveTransaction.save(request);
+    final SaveTransactionResponse actual = saveTransaction.save(REQUEST);
 
     Assertions.assertThat(actual).isSameAs(PROCESSED);
   }
 
   @Test
-  void shouldReturnFutureWhenTransactionTimeStampIsInTheFuture() {
-    final BigDecimal amount = new BigDecimal("12.3343");
-    final OffsetDateTime timeStamp = OffsetDateTime.now().plus(40, SECONDS);
-    final SaveTransactionRequest request = new SaveTransactionRequest(amount, timeStamp);
-    final SaveTransaction saveTransaction = new SaveTransaction();
+  void shouldReturnFutureWhenTransactionIsInTheFuture() {
+    when(timeService.getCurrentTime()).thenReturn(TIME_STAMP.minus(Duration.ofSeconds(2)));
 
-    final SaveTransactionResponse actual = saveTransaction.save(request);
+    final SaveTransactionResponse actual = saveTransaction.save(REQUEST);
 
     Assertions.assertThat(actual).isSameAs(FUTURE);
   }
