@@ -1,12 +1,12 @@
 package com.n26.usecase.savetransaction;
 
 import com.n26.domain.Amount;
-import com.n26.domain.exception.FutureTimeStampException;
+import com.n26.domain.exception.FutureTimestampException;
 import com.n26.domain.TimeService;
 import com.n26.domain.Transaction;
 import com.n26.domain.TransactionRepository;
-import com.n26.domain.TransactionTimeStamp;
-import com.n26.domain.exception.OldTimeStampException;
+import com.n26.domain.TransactionTimestamp;
+import com.n26.domain.exception.OldTimestampException;
 
 public class SaveTransaction {
   private final TimeService timeService;
@@ -21,17 +21,17 @@ public class SaveTransaction {
 
   public SaveTransactionResponse save(SaveTransactionRequest request) {
     try {
-      final TransactionTimeStamp transactionTimeStamp =
-          new TransactionTimeStamp(request.getTimeStamp(), timeService.getCurrentTime());
+      final TransactionTimestamp transactionTimeStamp =
+          new TransactionTimestamp(request.getTimestamp(), timeService.getCurrentTime());
       final Transaction transaction =
           new Transaction(new Amount(request.getAmount()), transactionTimeStamp);
 
       transactionRepository.save(transaction);
 
       return SaveTransactionResponse.PROCESSED;
-    } catch (OldTimeStampException ex) {
+    } catch (OldTimestampException ex) {
       return SaveTransactionResponse.OLDER;
-    } catch (FutureTimeStampException ex) {
+    } catch (FutureTimestampException ex) {
       return SaveTransactionResponse.FUTURE;
     }
   }

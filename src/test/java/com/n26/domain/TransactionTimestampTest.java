@@ -1,7 +1,7 @@
 package com.n26.domain;
 
-import com.n26.domain.exception.FutureTimeStampException;
-import com.n26.domain.exception.OldTimeStampException;
+import com.n26.domain.exception.FutureTimestampException;
+import com.n26.domain.exception.OldTimestampException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,32 +15,32 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class TransactionTimeStampTest {
+class TransactionTimestampTest {
 
   @ParameterizedTest
   @MethodSource("getInputsOutOf60Seconds")
-  void shouldFailWhenOffsetIsOlderThan60s(OffsetDateTime timeStamp, OffsetDateTime occurredAt) {
+  void shouldFailWhenOffsetIsOlderThan60s(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
 
-    assertThatThrownBy(() -> new TransactionTimeStamp(timeStamp, occurredAt))
-        .isInstanceOf(OldTimeStampException.class);
+    assertThatThrownBy(() -> new TransactionTimestamp(timestamp, occurredAt))
+        .isInstanceOf(OldTimestampException.class);
   }
 
   @ParameterizedTest
   @MethodSource("getInputsInside60sRange")
-  void shouldCreateTransactionTimeStampFromOkTime(OffsetDateTime timeStamp, OffsetDateTime occurredAt) {
-    final TransactionTimeStamp transactionTimeStamp = new TransactionTimeStamp(timeStamp, occurredAt);
+  void shouldCreateTransactionTimeStampFromOkTime(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
+    final TransactionTimestamp transactionTimeStamp = new TransactionTimestamp(timestamp, occurredAt);
 
     assertThat(transactionTimeStamp)
-        .isEqualToComparingFieldByField(new TransactionTimeStamp(timeStamp, occurredAt))
-        .isNotEqualTo(new TransactionTimeStamp(OffsetDateTime.now(), OffsetDateTime.now()));
+        .isEqualToComparingFieldByField(new TransactionTimestamp(timestamp, occurredAt))
+        .isNotEqualTo(new TransactionTimestamp(OffsetDateTime.now(), OffsetDateTime.now()));
   }
 
   @ParameterizedTest
   @MethodSource("getInputsWithTimeStampAfterOccurredAt")
-  void shouldFailWhenOffsetIsAfterOccurredAt(OffsetDateTime timeStamp, OffsetDateTime occurredAt) {
+  void shouldFailWhenOffsetIsAfterOccurredAt(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
 
-    assertThatThrownBy(() -> new TransactionTimeStamp(timeStamp, occurredAt))
-        .isInstanceOf(FutureTimeStampException.class);
+    assertThatThrownBy(() -> new TransactionTimestamp(timestamp, occurredAt))
+        .isInstanceOf(FutureTimestampException.class);
   }
 
   private static Stream<Arguments> getInputsOutOf60Seconds() {

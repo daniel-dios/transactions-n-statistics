@@ -4,7 +4,7 @@ import com.n26.domain.Amount;
 import com.n26.domain.TimeService;
 import com.n26.domain.Transaction;
 import com.n26.domain.TransactionRepository;
-import com.n26.domain.TransactionTimeStamp;
+import com.n26.domain.TransactionTimestamp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -51,17 +51,17 @@ class SaveTransactionTest {
   @Test
   void shouldReturnProcessedAndPersistTransactionWhenTransactionIsInTheRange() {
     when(timeService.getCurrentTime()).thenReturn(OCCURRED_AT);
-    final OffsetDateTime timeStampInRange = OCCURRED_AT.minus(Duration.ofSeconds(1));
+    final OffsetDateTime inRangeTimestamp = OCCURRED_AT.minus(Duration.ofSeconds(1));
 
-    final SaveTransactionResponse actual = saveTransaction.save(new SaveTransactionRequest(AMOUNT, timeStampInRange));
+    final SaveTransactionResponse actual = saveTransaction.save(new SaveTransactionRequest(AMOUNT, inRangeTimestamp));
 
     assertThat(actual).isSameAs(PROCESSED);
     verify(transactionRepository).save(
         argThat(transaction -> {
           assertThat(transaction.getAmount())
               .isEqualToComparingFieldByField(new Amount(AMOUNT));
-          assertThat(transaction.getTimeStamp())
-              .isEqualToComparingFieldByField(new TransactionTimeStamp(timeStampInRange, OCCURRED_AT));
+          assertThat(transaction.getTimestamp())
+              .isEqualToComparingFieldByField(new TransactionTimestamp(inRangeTimestamp, OCCURRED_AT));
           return true;
         }));
   }

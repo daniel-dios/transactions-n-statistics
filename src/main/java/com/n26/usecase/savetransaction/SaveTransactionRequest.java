@@ -5,18 +5,18 @@ import java.time.OffsetDateTime;
 
 public class SaveTransactionRequest {
   private final BigDecimal amount;
-  private final OffsetDateTime timeStamp;
+  private final OffsetDateTime timestamp;
 
-  public SaveTransactionRequest(BigDecimal amount, OffsetDateTime timeStamp) {
+  public SaveTransactionRequest(BigDecimal amount, OffsetDateTime timestamp) {
     this.amount = amount;
-    this.timeStamp = timeStamp;
+    this.timestamp = timestamp;
   }
 
   public BigDecimal getAmount() {
     return amount;
   }
 
-  public OffsetDateTime getTimeStamp() {
-    return timeStamp;
+  public OffsetDateTime getTimestamp() {
+    return timestamp;
   }
 }

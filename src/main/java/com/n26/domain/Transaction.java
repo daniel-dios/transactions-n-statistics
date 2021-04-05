@@ -2,18 +2,18 @@ package com.n26.domain;
 
 public final class Transaction {
   private final Amount amount;
-  private final TransactionTimeStamp timeStamp;
+  private final TransactionTimestamp timestamp;
 
-  public Transaction(Amount amount, TransactionTimeStamp timeStamp) {
+  public Transaction(Amount amount, TransactionTimestamp timestamp) {
     this.amount = amount;
-    this.timeStamp = timeStamp;
+    this.timestamp = timestamp;
   }
 
   public Amount getAmount() {
     return amount;
   }
 
-  public TransactionTimeStamp getTimeStamp() {
-    return timeStamp;
+  public TransactionTimestamp getTimestamp() {
+    return timestamp;
   }
 }
