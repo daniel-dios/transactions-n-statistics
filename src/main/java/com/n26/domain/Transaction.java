@@ -1,5 +1,7 @@
 package com.n26.domain;
 
+import java.time.OffsetDateTime;
+
 public final class Transaction {
   private final Amount amount;
   private final TransactionTimestamp timestamp;
@@ -11,5 +13,9 @@ public final class Transaction {
 
   public Amount getAmount() {
     return amount;
+  }
+
+  public OffsetDateTime getTimestamp() {
+    return timestamp.getValueSecondsTruncated();
   }
 }
