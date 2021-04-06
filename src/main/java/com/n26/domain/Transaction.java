@@ -12,8 +12,4 @@ public final class Transaction {
   public Amount getAmount() {
     return amount;
   }
-
-  public TransactionTimestamp getTimestamp() {
-    return timestamp;
-  }
 }
