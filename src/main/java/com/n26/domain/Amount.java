@@ -11,6 +11,23 @@ public final class Amount {
     this.value = value;
   }
 
+  public Amount sum(Amount toSum) {
+    return new Amount(value.add(toSum.value));
+  }
+
+  public Amount max(Amount toCompare) {
+    return new Amount(value.max(toCompare.value));
+  }
+
+  public Amount min(Amount toCompare) {
+    return new Amount(value.min(toCompare.value));
+  }
+
+  public Amount divideBy(Amount amount) {
+    final BigDecimal divide = value.divide(amount.value, BigDecimal.ROUND_HALF_UP);
+    return new Amount(divide);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
