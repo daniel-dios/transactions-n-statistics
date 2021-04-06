@@ -1,4 +1,4 @@
 package com.n26.domain.exception;
 
-public class OldTransactionTimestampException extends WrongTransactionTimestampException {
+public class OldTransactionTimestampException extends IllegalArgumentException {
 }
