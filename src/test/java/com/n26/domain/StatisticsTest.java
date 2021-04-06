@@ -48,6 +48,18 @@ class StatisticsTest {
         .isEqualToComparingFieldByField(expected);
   }
 
+  @Test
+  void shouldAggregateTransactionWhenStatisticsIsEmpty() {
+    final Transaction transaction = createTransaction("1.123", now().minus(Duration.ofSeconds(1)), now());
+    final Statistics statistics = Statistics.EMPTY_STATISTICS;
+
+    final Statistics actual = statistics.aggregate(transaction);
+
+    final Statistics expected = createStatistics("1.123", "1.123", "1.123", 1);
+    assertThat(actual)
+        .isEqualToComparingFieldByField(expected);
+  }
+
   private static Stream<Arguments> getNotValidInputs() {
     return Stream.of(
         Arguments.of("5", "2", "3", 2),

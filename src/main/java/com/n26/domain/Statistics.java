@@ -33,7 +33,7 @@ public final class Statistics {
     return new Statistics(
         sum.sum(transaction.getAmount()),
         max.max(transaction.getAmount()),
-        min.min(transaction.getAmount()),
+        isEmpty() ? transaction.getAmount() : min.min(transaction.getAmount()),
         count.add(new Count(1))
     );
   }
@@ -56,6 +56,13 @@ public final class Statistics {
 
   public long getCount() {
     return count.getValue();
+  }
+
+  private boolean isEmpty() {
+    return count.equals(Count.ZERO)
+        && sum.equals(Amount.ZERO)
+        && max.equals(Amount.ZERO)
+        && min.equals(Amount.ZERO);
   }
 
   private void validateInputs(Amount sum, Amount max, Amount min, Count count) {
