@@ -5,22 +5,14 @@ import com.n26.domain.exception.WrongStatisticsInputs;
 import java.math.BigDecimal;
 
 public final class Statistics {
-  public static final Statistics EMPTY_STATISTICS = new Statistics(
-      Amount.ZERO,
-      Amount.ZERO,
-      Amount.ZERO,
-      Count.ZERO);
+  public static final Statistics EMPTY_STATISTICS = new Statistics(Amount.ZERO, Amount.ZERO, Amount.ZERO, Count.ZERO);
 
   private final Amount sum;
   private final Amount max;
   private final Amount min;
   private final Count count;
 
-  public Statistics(
-      Amount sum,
-      Amount max,
-      Amount min,
-      Count count) {
+  public Statistics(Amount sum, Amount max, Amount min, Count count) {
     validateInputs(sum, max, min, count);
     this.sum = sum;
     this.max = max;
@@ -29,15 +21,20 @@ public final class Statistics {
   }
 
   public static Statistics merge(Statistics a, Statistics b) {
-    final Amount sum = a.sum.sum(b.sum);
-    final Amount max = a.max.max(b.max);
-    final Amount min = a.min.min(b.max);
-    final Count count = a.count.add(b.count);
     return new Statistics(
-        sum,
-        max,
-        min,
-        count
+        a.sum.sum(b.sum),
+        a.max.max(b.max),
+        a.min.min(b.max),
+        a.count.add(b.count)
+    );
+  }
+
+  public Statistics aggregate(Transaction transaction) {
+    return new Statistics(
+        sum.sum(transaction.getAmount()),
+        max.max(transaction.getAmount()),
+        min.min(transaction.getAmount()),
+        count.add(new Count(1))
     );
   }
 
@@ -64,7 +61,7 @@ public final class Statistics {
   private void validateInputs(Amount sum, Amount max, Amount min, Count count) {
     if (checkMaxIsGreaterThanMin(max, min)
         || checkSumIsGreaterThanMax(sum, max)
-        || checkSumIsBiggerThanMaxMin(sum, max, min)
+        || checkSumIsBiggerThanMaxMin(sum, max, min, count)
         || checkSumIsZeroWhenCountIsZero(sum, count)) {
       throw new WrongStatisticsInputs();
     }
@@ -74,9 +71,9 @@ public final class Statistics {
     return (count.equals(Count.ZERO) && !sum.equals(Amount.ZERO));
   }
 
-  private boolean checkSumIsBiggerThanMaxMin(Amount sum, Amount max, Amount min) {
+  private boolean checkSumIsBiggerThanMaxMin(Amount sum, Amount max, Amount min, Count count) {
     final Amount total = max.sum(min);
-    return (!total.equals(sum) && sum.min(total).equals(sum));
+    return (count.getValue() > 1 && !total.equals(sum) && sum.min(total).equals(sum));
   }
 
   private boolean checkSumIsGreaterThanMax(Amount sum, Amount max) {
