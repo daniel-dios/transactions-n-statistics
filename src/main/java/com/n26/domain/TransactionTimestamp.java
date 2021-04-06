@@ -17,6 +17,10 @@ public final class TransactionTimestamp {
     this.timestamp = timestamp;
   }
 
+  public static boolean isInRange(OffsetDateTime currentTime, OffsetDateTime dateTime) {
+    return dateTime.isAfter(currentTime.minus(OLD_RANGE));
+  }
+
   public OffsetDateTime getValueSecondsTruncated() {
     return timestamp.truncatedTo(SECONDS);
   }

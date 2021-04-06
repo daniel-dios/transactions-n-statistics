@@ -1,7 +1,7 @@
 package com.n26.domain;
 
-import java.util.Set;
+import java.util.List;
 
 public interface StatisticsRepository {
-  Set<Statistics> getStatistics();
+  List<Statistics> getStatistics();
 }

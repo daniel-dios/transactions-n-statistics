@@ -54,6 +54,15 @@ class TransactionTimestampTest {
         .isNotEqualTo(parse("2018-07-17T09:59:51.312Z"));
   }
 
+  @Test
+  void shouldReturnTrueWhenDateIsInRange() {
+    assertThat(TransactionTimestamp.isInRange(parse("2018-07-17T09:59:51.312Z"), parse("2018-07-17T09:59:01.312Z")))
+        .isTrue();
+
+    assertThat(TransactionTimestamp.isInRange(parse("2018-07-17T09:59:51.312Z"), parse("2018-07-17T09:58:50.312Z")))
+        .isFalse();
+  }
+
   private static Stream<Arguments> getInputsOutOf60Seconds() {
     final OffsetDateTime now = OffsetDateTime.now();
     return Stream.of(
