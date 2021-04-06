@@ -37,7 +37,7 @@ class StatisticsTest {
   @Test
   void shouldMergeCorrectly() {
     final Statistics a = createStatistics("4.00", "3.00", "1.00", 2);
-    final Statistics b = createStatistics("123.75", "122.00", "2.00", 10);
+    final Statistics b = createStatistics("123.75", "122.00", "1.05", 10);
 
     final Statistics merge = Statistics.merge(a, b);
 
