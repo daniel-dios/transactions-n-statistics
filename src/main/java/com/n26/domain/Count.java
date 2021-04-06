@@ -1,11 +1,9 @@
 package com.n26.domain;
 
-import java.math.BigDecimal;
+public class Count {
+  private final int value;
 
-public final class Amount {
-  private final BigDecimal value;
-
-  public Amount(BigDecimal value) {
+  public Count(int value) {
     this.value = value;
   }
 
@@ -18,13 +16,13 @@ public final class Amount {
       return false;
     }
 
-    Amount amount = (Amount) o;
+    Count count = (Count) o;
 
-    return value.equals(amount.value);
+    return value == count.value;
   }
 
   @Override
   public int hashCode() {
-    return value.hashCode();
+    return value;
   }
 }
