@@ -24,12 +24,4 @@ class CountTest {
         .isEqualTo(b.add(a))
         .isEqualTo(new Count(3));
   }
-
-  @Test
-  void shouldConvertIntoAmount() {
-    final Count a = new Count(1);
-
-    assertThat(a.toAmount())
-        .isEqualTo(new Amount(new BigDecimal("1")));
-  }
 }

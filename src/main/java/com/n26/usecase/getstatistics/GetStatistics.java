@@ -10,11 +10,13 @@ public class GetStatistics {
     this.statisticsRepository = statisticsRepository;
   }
 
-  public Statistics getStatistics() {
-    return statisticsRepository
-        .getStatistics()
-        .stream()
-        .reduce(Statistics::merge)
-        .orElse(Statistics.EMPTY_STATISTICS);
+  public GetStatisticsResponse getStatistics() {
+    return
+        GetStatisticsResponse.mapToGetStatisticsResponse(
+            statisticsRepository
+                .getStatistics()
+                .stream()
+                .reduce(Statistics::merge)
+                .orElse(Statistics.EMPTY_STATISTICS));
   }
 }

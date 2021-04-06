@@ -1,12 +1,10 @@
 package com.n26.domain;
 
-import java.math.BigDecimal;
-
 public final class Count {
   public static final Count ZERO = new Count(0);
-  private final int value;
+  private final long value;
 
-  public Count(int value) {
+  public Count(long value) {
     this.value = value;
   }
 
@@ -14,8 +12,8 @@ public final class Count {
     return new Count(value + count.value);
   }
 
-  public Amount toAmount() {
-    return new Amount(new BigDecimal(value));
+  public long getValue() {
+    return value;
   }
 
   @Override
@@ -34,6 +32,6 @@ public final class Count {
 
   @Override
   public int hashCode() {
-    return value;
+    return (int) (value ^ (value >>> 32));
   }
 }
