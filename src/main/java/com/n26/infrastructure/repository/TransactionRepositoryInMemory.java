@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static com.n26.domain.Statistics.EMPTY_STATISTICS;
+
 public class TransactionRepositoryInMemory implements TransactionRepository, StatisticsRepository {
 
   private final Map<OffsetDateTime, Statistics> statisticsMap = new ConcurrentHashMap<>();
@@ -36,7 +38,10 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
 
   @Override
   public void save(Transaction transaction) {
-    statisticsMap.put(transaction.getTimestamp(), Statistics.EMPTY_STATISTICS.aggregate(transaction));
+    statisticsMap.merge(
+        transaction.getTimestamp(),
+        EMPTY_STATISTICS.aggregate(transaction),
+        Statistics::merge);
   }
 
   @Override

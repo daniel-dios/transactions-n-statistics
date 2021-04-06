@@ -47,4 +47,21 @@ class TransactionRepositoryInMemoryTest {
 
     assertThat(actual).isEmpty();
   }
+
+  @Test
+  void shouldMergeTransactionsWhenTheyAreInSameSecond() {
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
+    final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
+    final Transaction transaction = createTransaction("200.000", TIMESTAMP, OCCURRED_AT);
+    final Transaction otherTransaction =
+        createTransaction("100.00", TIMESTAMP.minus(Duration.ofMillis(10)), OCCURRED_AT);
+
+    repositoryInMemory.save(transaction);
+    repositoryInMemory.save(otherTransaction);
+
+    final Statistics expected = createStatistics("300.000", "200.000", "100.00", 2);
+    assertThat(repositoryInMemory.getStatistics())
+        .hasOnlyOneElementSatisfying(value ->
+            assertThat(value).isEqualToComparingFieldByField(expected));
+  }
 }
