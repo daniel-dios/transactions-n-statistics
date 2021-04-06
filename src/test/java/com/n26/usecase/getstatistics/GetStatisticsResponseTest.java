@@ -1,12 +1,11 @@
 package com.n26.usecase.getstatistics;
 
-import com.n26.domain.Amount;
-import com.n26.domain.Count;
 import com.n26.domain.Statistics;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static com.n26.utils.DomainFactoryUtils.createStatistics;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GetStatisticsResponseTest {
@@ -24,20 +23,8 @@ class GetStatisticsResponseTest {
         new BigDecimal("1.00"),
         3 // 6 + 6 + 1
     );
-    assertThat(new BigDecimal("1.00")).isNotEqualTo(new BigDecimal("1.000"));
-    assertThat(actual).isEqualTo(expected);
-  }
 
-  private Statistics createStatistics(String sum, String max, String min, int count) {
-    return new Statistics(
-        createAmount(sum),
-        createAmount(max),
-        createAmount(min),
-        new Count(count)
-    );
-  }
-
-  private Amount createAmount(String value) {
-    return new Amount(new BigDecimal(value));
+    assertThat(actual)
+        .isEqualToComparingFieldByField(expected);
   }
 }

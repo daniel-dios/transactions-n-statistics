@@ -6,32 +6,22 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.stream.Stream;
 
+import static com.n26.utils.DomainFactoryUtils.createStatistics;
+import static com.n26.utils.DomainFactoryUtils.createTransaction;
+import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class StatisticsTest {
 
   @ParameterizedTest
-  @MethodSource("getNotPossibleInputs")
+  @MethodSource("getNotValidInputs")
   void shouldThrowWrongStatisticsInputs(String sum, String max, String min, int count) {
     assertThatThrownBy(() -> createStatistics(sum, max, min, count))
         .isInstanceOf(WrongStatisticsInputs.class);
-  }
-
-  private static Stream<Arguments> getNotPossibleInputs() {
-    return Stream.of(
-        Arguments.of("5", "2", "3", 2),
-        Arguments.of("5", "7", "1", 2),
-        Arguments.of("5", "4", "4", 2),
-        Arguments.of("0", "0", "1", 0),
-        Arguments.of("0", "1", "0", 0),
-        Arguments.of("1", "0", "0", 0)
-    );
   }
 
   @Test
@@ -48,7 +38,7 @@ class StatisticsTest {
 
   @Test
   void shouldAggregateTransaction() {
-    final Transaction transaction = createTransaction("1.123");
+    final Transaction transaction = createTransaction("1.123", now().minus(Duration.ofSeconds(1)), now());
     final Statistics statistics = createStatistics("2.0000", "2.0000", "2.0000", 1);
 
     final Statistics actual = statistics.aggregate(transaction);
@@ -58,21 +48,14 @@ class StatisticsTest {
         .isEqualToComparingFieldByField(expected);
   }
 
-  private Transaction createTransaction(String amount) {
-    return new Transaction(new Amount(new BigDecimal(amount)),
-        new TransactionTimestamp(OffsetDateTime.now().minus(Duration.ofSeconds(1)), OffsetDateTime.now()));
-  }
-
-  private Statistics createStatistics(String sum, String max, String min, int count) {
-    return new Statistics(
-        createAmount(sum),
-        createAmount(max),
-        createAmount(min),
-        new Count(count)
+  private static Stream<Arguments> getNotValidInputs() {
+    return Stream.of(
+        Arguments.of("5", "2", "3", 2),
+        Arguments.of("5", "7", "1", 2),
+        Arguments.of("5", "4", "4", 2),
+        Arguments.of("0", "0", "1", 0),
+        Arguments.of("0", "1", "0", 0),
+        Arguments.of("1", "0", "0", 0)
     );
-  }
-
-  private Amount createAmount(String value) {
-    return new Amount(new BigDecimal(value));
   }
 }

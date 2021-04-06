@@ -38,19 +38,19 @@ public final class Statistics {
     );
   }
 
-  public BigDecimal getSum() {
+  public BigDecimal getSumRound() {
     return sum.getRoundValue();
   }
 
-  public BigDecimal getAvg() {
+  public BigDecimal getAvgRound() {
     return sum.divide(count.getValue());
   }
 
-  public BigDecimal getMax() {
+  public BigDecimal getMaxRound() {
     return max.getRoundValue();
   }
 
-  public BigDecimal getMin() {
+  public BigDecimal getMinRound() {
     return min.getRoundValue();
   }
 
