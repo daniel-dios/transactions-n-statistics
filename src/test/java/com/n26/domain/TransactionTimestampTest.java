@@ -2,6 +2,7 @@ package com.n26.domain;
 
 import com.n26.domain.exception.FutureTransactionTimestampException;
 import com.n26.domain.exception.OldTransactionTimestampException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -41,6 +42,16 @@ class TransactionTimestampTest {
 
     assertThatThrownBy(() -> new TransactionTimestamp(timestamp, occurredAt))
         .isInstanceOf(FutureTransactionTimestampException.class);
+  }
+
+  @Test
+  void shouldReturnValueTruncatedToSeconds() {
+    final TransactionTimestamp transactionTimestamp =
+        new TransactionTimestamp(parse("2018-07-17T09:59:51.312Z"), parse("2018-07-17T10:00:49.312Z"));
+
+    assertThat(transactionTimestamp.getValueSecondsTruncated())
+        .isEqualTo(parse("2018-07-17T09:59:51.000Z"))
+        .isNotEqualTo(parse("2018-07-17T09:59:51.312Z"));
   }
 
   private static Stream<Arguments> getInputsOutOf60Seconds() {

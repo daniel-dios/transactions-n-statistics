@@ -6,6 +6,8 @@ import com.n26.domain.exception.OldTransactionTimestampException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 public final class TransactionTimestamp {
   private static final Duration OLD_RANGE = Duration.ofSeconds(60);
   private final OffsetDateTime timestamp;
@@ -13,6 +15,10 @@ public final class TransactionTimestamp {
   public TransactionTimestamp(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
     validateInputs(timestamp, occurredAt);
     this.timestamp = timestamp;
+  }
+
+  public OffsetDateTime getValueSecondsTruncated() {
+    return timestamp.truncatedTo(SECONDS);
   }
 
   private void validateInputs(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
