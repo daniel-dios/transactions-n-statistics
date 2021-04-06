@@ -3,6 +3,8 @@ package com.n26.domain;
 import java.math.BigDecimal;
 
 public final class Amount {
+  public static final Amount ZERO = new Amount(BigDecimal.ZERO);
+
   private final BigDecimal value;
 
   public Amount(BigDecimal value) {

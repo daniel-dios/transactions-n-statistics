@@ -56,12 +56,11 @@ class SaveTransactionTest {
     final SaveTransactionResponse actual = saveTransaction.save(new SaveTransactionRequest(AMOUNT, inRangeTimestamp));
 
     assertThat(actual).isSameAs(PROCESSED);
+    final Transaction expected =
+        new Transaction(new Amount(AMOUNT), new TransactionTimestamp(inRangeTimestamp, OCCURRED_AT));
     verify(transactionRepository).save(
         argThat(transaction -> {
-          assertThat(transaction.getAmount())
-              .isEqualToComparingFieldByField(new Amount(AMOUNT));
-          assertThat(transaction.getTimestamp())
-              .isEqualToComparingFieldByField(new TransactionTimestamp(inRangeTimestamp, OCCURRED_AT));
+          assertThat(transaction).isEqualToComparingFieldByField(expected);
           return true;
         }));
   }

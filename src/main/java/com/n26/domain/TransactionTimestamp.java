@@ -36,4 +36,23 @@ public final class TransactionTimestamp {
   private boolean isFutureRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
     return occurredAt.isBefore(timestamp);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    TransactionTimestamp that = (TransactionTimestamp) o;
+
+    return timestamp.equals(that.timestamp);
+  }
+
+  @Override
+  public int hashCode() {
+    return timestamp.hashCode();
+  }
 }
