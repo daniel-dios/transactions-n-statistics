@@ -17,14 +17,16 @@ import static org.mockito.Mockito.when;
 
 class TransactionRepositoryInMemoryTest {
 
+  private static final OffsetDateTime OCCURRED_AT = OffsetDateTime.parse("2018-07-17T09:59:51.312Z");
+  private static final OffsetDateTime TIMESTAMP = OCCURRED_AT.minus(Duration.ofSeconds(10));
+
+  private final TimeService timeService = Mockito.mock(TimeService.class);
+
   @Test
   void shouldSaveOneTransaction() {
-    final OffsetDateTime occurredAt = OffsetDateTime.parse("2018-07-17T09:59:51.312Z");
-    final OffsetDateTime timestamp = occurredAt.minus(Duration.ofSeconds(10));
-    final TimeService timeService = Mockito.mock(TimeService.class);
-    when(timeService.getCurrentTime()).thenReturn(occurredAt.plus(Duration.ofSeconds(30)));
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
     final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
-    final Transaction transaction = createTransaction("200.000", timestamp, occurredAt);
+    final Transaction transaction = createTransaction("200.000", TIMESTAMP, OCCURRED_AT);
 
     repositoryInMemory.save(transaction);
 
@@ -36,12 +38,9 @@ class TransactionRepositoryInMemoryTest {
 
   @Test
   void shouldReturnStatisticsInRange() {
-    final OffsetDateTime occurredAt = OffsetDateTime.parse("2018-07-17T09:59:51.312Z");
-    final OffsetDateTime timestamp = occurredAt.minus(Duration.ofSeconds(10));
-    final TimeService timeService = Mockito.mock(TimeService.class);
-    when(timeService.getCurrentTime()).thenReturn(occurredAt.plus(Duration.ofSeconds(61)));
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(61)));
     final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
-    final Transaction transaction = createTransaction("200.000", timestamp, occurredAt);
+    final Transaction transaction = createTransaction("200.000", TIMESTAMP, OCCURRED_AT);
     repositoryInMemory.save(transaction);
 
     final List<Statistics> actual = repositoryInMemory.getStatistics();
