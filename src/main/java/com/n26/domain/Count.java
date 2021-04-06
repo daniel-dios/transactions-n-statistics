@@ -1,6 +1,6 @@
 package com.n26.domain;
 
-public class Count {
+public final class Count {
   public static final Count ZERO = new Count(0);
   private final int value;
 

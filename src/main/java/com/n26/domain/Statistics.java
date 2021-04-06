@@ -1,6 +1,6 @@
 package com.n26.domain;
 
-public class Statistics {
+public final class Statistics {
   public static final Statistics EMPTY_STATISTICS = new Statistics(
       Amount.ZERO,
       Amount.ZERO,
