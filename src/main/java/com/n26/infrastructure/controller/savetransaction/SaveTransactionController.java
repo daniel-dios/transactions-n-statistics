@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
@@ -42,7 +43,11 @@ public class SaveTransactionController {
 
   private OffsetDateTime getDateTime(SaveTransactionBody body) {
     try {
-      return OffsetDateTime.parse(body.getTimestamp());
+      final OffsetDateTime parsed = OffsetDateTime.parse(body.getTimestamp());
+      if (parsed.getOffset().equals(ZoneOffset.UTC)){
+        return parsed;
+      }
+      throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
     } catch (DateTimeException ex) {
       throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
     }

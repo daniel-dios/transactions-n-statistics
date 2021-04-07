@@ -4,6 +4,7 @@ import com.n26.infrastructure.controller.ControllerTest;
 import com.n26.usecase.savetransaction.SaveTransaction;
 import com.n26.usecase.savetransaction.SaveTransactionRequest;
 import com.n26.usecase.savetransaction.SaveTransactionResponse;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,20 +29,17 @@ public class SaveTransactionControllerTest extends ControllerTest {
   @MockBean
   private SaveTransaction saveTransaction;
 
-  private final String validRequestAsJson = "{"
-      + "\"amount\":\"12.3343\","
-      + "\"timestamp\":\"2018-07-17T09:59:51.312Z\""
-      + "}";
-
-  private final SaveTransactionRequest validRequest =
-      new SaveTransactionRequest(new BigDecimal("12.3343"), OffsetDateTime.parse("2018-07-17T09:59:51.312Z"));
-
   @ParameterizedTest
   @MethodSource("getResponsesAndStatus")
-  void shouldReturnExpectedWhenSaveTransactionReturns(SaveTransactionResponse response, int expectedStatus)
-      throws Exception {
+  void shouldReturnExpectedWhenSaveReturns(SaveTransactionResponse response, int expectedStatus) throws Exception {
+    final SaveTransactionRequest validRequest =
+        new SaveTransactionRequest(new BigDecimal("12.3343"), OffsetDateTime.parse("2018-07-17T09:59:51.312Z"));
     when(saveTransaction.save(validRequest)).thenReturn(response);
 
+    final String validRequestAsJson = "{"
+        + "\"amount\":\"12.3343\","
+        + "\"timestamp\":\"2018-07-17T09:59:51.312Z\""
+        + "}";
     this.mockMvc
         .perform(buildPostWithBody(validRequestAsJson))
         .andExpect(status().is(expectedStatus));
@@ -66,6 +64,18 @@ public class SaveTransactionControllerTest extends ControllerTest {
 
     this.mockMvc
         .perform(buildPostWithBody(nonParsableJson))
+        .andExpect(status().isUnprocessableEntity());
+  }
+
+  @Test
+  void shouldReturnUnprocessableWhenTimeStampIsNotZ() throws Exception {
+    final String wrongZonedTimestamp = "{"
+        + "\"amount\":\"12.3343\","
+        + "\"timestamp\":\"2018-07-17T09:59:51.312+01:00\""
+        + "}";
+
+    this.mockMvc
+        .perform(buildPostWithBody(wrongZonedTimestamp))
         .andExpect(status().isUnprocessableEntity());
   }
 
