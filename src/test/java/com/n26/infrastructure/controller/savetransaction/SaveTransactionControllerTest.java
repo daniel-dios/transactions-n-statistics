@@ -3,7 +3,6 @@ package com.n26.infrastructure.controller.savetransaction;
 import com.n26.infrastructure.controller.ControllerTest;
 import com.n26.usecase.savetransaction.SaveTransaction;
 import com.n26.usecase.savetransaction.SaveTransactionRequest;
-import com.n26.usecase.savetransaction.SaveTransactionResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -35,12 +34,8 @@ public class SaveTransactionControllerTest extends ControllerTest {
   void shouldReturnNoContentWhenSaveReturnsOlder() throws Exception {
     when(saveTransaction.save(validRequest)).thenReturn(OLDER);
 
-    final MockHttpServletRequestBuilder body = post("/transaction")
-        .content(validRequestAsJson)
-        .contentType(MediaType.APPLICATION_JSON);
-
     this.mockMvc
-        .perform(body)
+        .perform(buildPostWithBody())
         .andExpect(status().isNoContent());
   }
 
@@ -48,12 +43,14 @@ public class SaveTransactionControllerTest extends ControllerTest {
   void shouldReturnCreatedWhenSaveReturnsProcessed() throws Exception {
     when(saveTransaction.save(validRequest)).thenReturn(PROCESSED);
 
-    final MockHttpServletRequestBuilder body = post("/transaction")
+    this.mockMvc
+        .perform(buildPostWithBody())
+        .andExpect(status().isCreated());
+  }
+
+  private MockHttpServletRequestBuilder buildPostWithBody() {
+    return post("/transaction")
         .content(validRequestAsJson)
         .contentType(MediaType.APPLICATION_JSON);
-
-    this.mockMvc
-        .perform(body)
-        .andExpect(status().isCreated());
   }
 }
