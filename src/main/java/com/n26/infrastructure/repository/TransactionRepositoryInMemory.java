@@ -42,6 +42,12 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
         transaction.getTimestamp(),
         EMPTY_STATISTICS.aggregate(transaction),
         Statistics::merge);
+
+    statisticsMap
+        .keySet()
+        .stream()
+        .filter(entry -> !TransactionTimestamp.isInRange(timeService.getCurrentTime(), entry))
+        .forEach(statisticsMap::remove);
   }
 
   @Override
