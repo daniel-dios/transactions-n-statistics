@@ -89,6 +89,25 @@ class TransactionRepositoryInMemoryTest {
             assertThat(value).isEqualToComparingFieldByField(expected));
   }
 
+  @Test
+  void shouldDeleteAllTransactions() {
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
+    final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
+    final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
+
+    repositoryInMemory.save(transaction);
+
+    final Statistics expected = createStatistics("200.000", "200.000", "200.000", 1);
+    assertThat(repositoryInMemory.getStatistics())
+        .hasSize(1)
+        .hasOnlyOneElementSatisfying(value ->
+            assertThat(value).isEqualToComparingFieldByField(expected));
+
+    repositoryInMemory.deleteTransactions();
+    assertThat(repositoryInMemory.getStatistics())
+        .isEmpty();
+  }
+
   private Transaction createValidTransaction(String s, OffsetDateTime plus, int afterSeconds) {
     return createTransaction(s, plus, plus.plus(Duration.ofSeconds(afterSeconds)));
   }

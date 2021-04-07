@@ -52,6 +52,6 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
 
   @Override
   public void deleteTransactions() {
-    throw new UnsupportedOperationException();
+    statisticsMap.clear();
   }
 }
