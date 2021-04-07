@@ -3,7 +3,6 @@ package com.n26.infrastructure.controller.savetransaction;
 import com.n26.usecase.savetransaction.SaveTransaction;
 import com.n26.usecase.savetransaction.SaveTransactionRequest;
 import com.n26.usecase.savetransaction.SaveTransactionResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +13,8 @@ import java.time.OffsetDateTime;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 public class SaveTransactionController {
@@ -30,11 +31,11 @@ public class SaveTransactionController {
         .save(new SaveTransactionRequest(new BigDecimal(body.getAmount()), OffsetDateTime.parse(body.getTimestamp())));
 
     if (save.equals(SaveTransactionResponse.OLDER)) {
-      return ResponseEntity.noContent().build();
+      return noContent().build();
     }
 
     if (save.equals(SaveTransactionResponse.PROCESSED)) {
-      return ResponseEntity.status(CREATED).build();
+      return status(CREATED).build();
     }
 
     throw new UnsupportedOperationException();
