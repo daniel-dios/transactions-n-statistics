@@ -1,7 +1,7 @@
 package com.n26.usecase.savetransaction;
 
 import com.n26.domain.Amount;
-import com.n26.domain.TimeService;
+import com.n26.domain.service.TimeService;
 import com.n26.domain.Transaction;
 import com.n26.domain.TransactionRepository;
 import com.n26.domain.TransactionTimestamp;

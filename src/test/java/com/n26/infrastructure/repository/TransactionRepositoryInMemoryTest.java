@@ -1,7 +1,7 @@
 package com.n26.infrastructure.repository;
 
 import com.n26.domain.Statistics;
-import com.n26.domain.TimeService;
+import com.n26.domain.service.TimeService;
 import com.n26.domain.Transaction;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
