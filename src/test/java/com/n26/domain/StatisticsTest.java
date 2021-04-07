@@ -29,10 +29,9 @@ class StatisticsTest {
     final Statistics a = createStatistics("4.00", "3.00", "1.00", 2);
     final Statistics b = createStatistics("123.75", "122.00", "1.05", 10);
 
-    final Statistics merge = Statistics.merge(a, b);
-
     final Statistics expected = createStatistics("127.75", "122.00", "1.00", 12);
-    assertThat(merge)
+    assertThat(Statistics.merge(a, b))
+        .isEqualTo(Statistics.merge(b, a))
         .isEqualToComparingFieldByField(expected);
   }
 
