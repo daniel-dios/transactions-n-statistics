@@ -31,7 +31,7 @@ class StatisticsTest {
 
     final Statistics expected = createStatistics("127.75", "122.00", "1.00", 12);
     assertThat(Statistics.merge(a, b))
-        .isEqualTo(Statistics.merge(b, a))
+        .isEqualToComparingFieldByField(Statistics.merge(b, a))
         .isEqualToComparingFieldByField(expected);
   }
 
