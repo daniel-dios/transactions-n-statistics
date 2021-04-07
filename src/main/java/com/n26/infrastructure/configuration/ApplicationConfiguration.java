@@ -6,6 +6,7 @@ import com.n26.domain.service.TimeService;
 import com.n26.infrastructure.repository.TransactionRepositoryInMemory;
 import com.n26.usecase.deletetransactions.DeleteTransactions;
 import com.n26.usecase.getstatistics.GetStatistics;
+import com.n26.usecase.savetransaction.SaveTransaction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,7 +29,16 @@ public class ApplicationConfiguration {
   }
 
   @Bean
-  public GetStatistics getStatistics(StatisticsRepository statisticsRepository){
+  public GetStatistics getStatistics(StatisticsRepository statisticsRepository) {
     return new GetStatistics(statisticsRepository);
+  }
+
+  @Bean
+  public SaveTransaction saveTransaction(
+      TimeService timeService,
+      TransactionRepository transactionRepository) {
+    return new SaveTransaction(
+        timeService,
+        transactionRepository);
   }
 }
