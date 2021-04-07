@@ -24,7 +24,7 @@ public final class Statistics {
     return new Statistics(
         a.sum.sum(b.sum),
         a.max.max(b.max),
-        a.min.min(b.max),
+        a.min.min(b.min),
         a.count.add(b.count)
     );
   }
