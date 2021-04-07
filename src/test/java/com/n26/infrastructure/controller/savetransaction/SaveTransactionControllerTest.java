@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.FUTURE;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.OLDER;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.PROCESSED;
+import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,21 +43,43 @@ public class SaveTransactionControllerTest extends ControllerTest {
     when(saveTransaction.save(validRequest)).thenReturn(response);
 
     this.mockMvc
-        .perform(buildPostWithBody())
+        .perform(buildPostWithBody(validRequestAsJson))
         .andExpect(status().is(expectedStatus));
+  }
+
+  private static Stream<Arguments> getNonParsableInputs() {
+    return Stream.of(
+        of("{"
+            + "\"amount\":\"12.3343\","
+            + "\"timestamp\":\"2018-07-17T\""
+            + "}"),
+        of("{"
+            + "\"amount\":\"12,343\","
+            + "\"timestamp\":\"2018-07-17T09:59:51.312Z\""
+            + "}")
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("getNonParsableInputs")
+  void shouldReturnUnprocessableWhenNonParsableInputs(String nonParsableJson) throws Exception {
+
+    this.mockMvc
+        .perform(buildPostWithBody(nonParsableJson))
+        .andExpect(status().isUnprocessableEntity());
   }
 
   private static Stream<Arguments> getResponsesAndStatus() {
     return Stream.of(
-        Arguments.of(PROCESSED, 201),
-        Arguments.of(OLDER, 204),
-        Arguments.of(FUTURE, 422)
+        of(PROCESSED, 201),
+        of(OLDER, 204),
+        of(FUTURE, 422)
     );
   }
 
-  private MockHttpServletRequestBuilder buildPostWithBody() {
+  private MockHttpServletRequestBuilder buildPostWithBody(String json) {
     return post("/transaction")
-        .content(validRequestAsJson)
+        .content(json)
         .contentType(MediaType.APPLICATION_JSON);
   }
 }

@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.DateTimeException;
 import java.time.OffsetDateTime;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -30,23 +32,32 @@ public class SaveTransactionController {
 
   @PostMapping(value = "/transaction", consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> saveTransaction(@RequestBody SaveTransactionBody body) {
-    final SaveTransactionResponse save = saveTransaction
-        .save(new SaveTransactionRequest(new BigDecimal(body.getAmount()), OffsetDateTime.parse(body.getTimestamp())));
+    try {
+      final BigDecimal amount = new BigDecimal(body.getAmount());
+      final OffsetDateTime parse = OffsetDateTime.parse(body.getTimestamp());
 
-    return status(mapToStatus(save)).build();
+      final SaveTransactionResponse save = saveTransaction.save(new SaveTransactionRequest(amount, parse));
+
+      return status(mapToStatus(save)).build();
+
+    } catch (NumberFormatException ex) {
+      throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
+    } catch (DateTimeException ex) {
+      throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
+    }
   }
 
   private HttpStatus mapToStatus(SaveTransactionResponse save) {
-    switch (save){
+    switch (save) {
       case PROCESSED:
         return CREATED;
       case OLDER:
         return NO_CONTENT;
       case FUTURE:
         return UNPROCESSABLE_ENTITY;
-      default:
-        // its not gonna happen but java 8...
-        return I_AM_A_TEAPOT;
     }
+
+    // its not gonna happen but java 8...
+    return I_AM_A_TEAPOT;
   }
 }
