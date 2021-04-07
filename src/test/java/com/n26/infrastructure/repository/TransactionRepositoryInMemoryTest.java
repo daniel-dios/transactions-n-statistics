@@ -20,26 +20,24 @@ class TransactionRepositoryInMemoryTest {
   private static final OffsetDateTime TIMESTAMP = OffsetDateTime.parse("2018-07-17T09:59:51.312Z");
 
   private final TimeService timeService = Mockito.mock(TimeService.class);
+  private final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
 
   @Test
   void shouldSaveOneTransaction() {
-    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
-    final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
+    final OffsetDateTime inRangeTimestamp = TIMESTAMP.plus(Duration.ofSeconds(30));
+    when(timeService.getCurrentTime()).thenReturn(inRangeTimestamp);
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
 
     repositoryInMemory.save(transaction);
 
     final Statistics expected = createStatistics("200.000", "200.000", "200.000", 1);
-    assertThat(repositoryInMemory.getStatistics())
-        .hasSize(1)
-        .hasOnlyOneElementSatisfying(value ->
-            assertThat(value).isEqualToComparingFieldByField(expected));
+    assertContainsOnly(repositoryInMemory.getStatistics(), expected);
   }
 
   @Test
   void shouldReturnStatisticsInRange() {
-    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(61)));
-    final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
+    final OffsetDateTime afterRangeTimestamp = TIMESTAMP.plus(Duration.ofSeconds(61));
+    when(timeService.getCurrentTime()).thenReturn(afterRangeTimestamp);
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
     repositoryInMemory.save(transaction);
 
@@ -59,16 +57,12 @@ class TransactionRepositoryInMemoryTest {
     repositoryInMemory.save(otherTransaction);
 
     final Statistics expected = createStatistics("300.000", "200.000", "100.00", 2);
-    assertThat(repositoryInMemory.getStatistics())
-        .hasSize(1)
-        .hasOnlyOneElementSatisfying(value ->
-            assertThat(value).isEqualToComparingFieldByField(expected));
+    assertContainsOnly(repositoryInMemory.getStatistics(), expected);
   }
 
   @Test
   void shouldDeleteOutOfRangeStoredEntries() {
     when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
-    final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
     repositoryInMemory.save(transaction);
 
@@ -77,35 +71,30 @@ class TransactionRepositoryInMemoryTest {
     repositoryInMemory.save(otherTransaction);
 
     final Statistics expected = createStatistics("100.00", "100.00", "100.00", 1);
-    assertThat(repositoryInMemory.getStatistics())
-        .hasSize(1)
-        .hasOnlyOneElementSatisfying(value ->
-            assertThat(value).isEqualToComparingFieldByField(expected));
+    assertContainsOnly(repositoryInMemory.getStatistics(), expected);
 
     when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
-    assertThat(repositoryInMemory.getStatistics())
-        .hasSize(1)
-        .hasOnlyOneElementSatisfying(value ->
-            assertThat(value).isEqualToComparingFieldByField(expected));
+    assertContainsOnly(repositoryInMemory.getStatistics(), expected);
   }
 
   @Test
   void shouldDeleteAllTransactions() {
     when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
-    final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
 
     repositoryInMemory.save(transaction);
 
     final Statistics expected = createStatistics("200.000", "200.000", "200.000", 1);
-    assertThat(repositoryInMemory.getStatistics())
-        .hasSize(1)
-        .hasOnlyOneElementSatisfying(value ->
-            assertThat(value).isEqualToComparingFieldByField(expected));
+    assertContainsOnly(repositoryInMemory.getStatistics(), expected);
 
     repositoryInMemory.deleteTransactions();
-    assertThat(repositoryInMemory.getStatistics())
-        .isEmpty();
+    assertThat(repositoryInMemory.getStatistics()).isEmpty();
+  }
+
+  private void assertContainsOnly(List<Statistics> statistics, Statistics expected) {
+    assertThat(statistics)
+        .hasSize(1)
+        .hasOnlyOneElementSatisfying(value -> assertThat(value).isEqualToComparingFieldByField(expected));
   }
 
   private Transaction createValidTransaction(String s, OffsetDateTime plus, int afterSeconds) {
