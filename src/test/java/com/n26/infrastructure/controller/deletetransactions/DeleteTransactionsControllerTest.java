@@ -1,5 +1,4 @@
-package com.n26.infrastructure.httpcontroller.deletetransactions;
-
+package com.n26.infrastructure.controller.deletetransactions;
 
 import com.n26.Application;
 import com.n26.usecase.deletetransactions.DeleteTransactions;

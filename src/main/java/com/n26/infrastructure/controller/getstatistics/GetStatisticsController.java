@@ -1,4 +1,4 @@
-package com.n26.infrastructure.httpcontroller.getstatistics;
+package com.n26.infrastructure.controller.getstatistics;
 
 import com.n26.usecase.getstatistics.GetStatistics;
 import org.springframework.http.HttpStatus;
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 
 @RestController
 public class GetStatisticsController {
@@ -20,7 +19,7 @@ public class GetStatisticsController {
 
   @GetMapping(value = "/statistics", produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  public GetStatisticsResponse getStatistics(){
-    return GetStatisticsResponse.mapFrom(getStatistics.getStatistics());
+  public GetStatisticsControllerResponse getStatistics(){
+    return GetStatisticsControllerResponse.mapFrom(getStatistics.getStatistics());
   }
 }

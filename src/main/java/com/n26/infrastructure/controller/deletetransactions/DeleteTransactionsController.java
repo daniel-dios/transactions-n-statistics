@@ -1,7 +1,6 @@
-package com.n26.infrastructure.httpcontroller.deletetransactions;
+package com.n26.infrastructure.controller.deletetransactions;
 
 import com.n26.usecase.deletetransactions.DeleteTransactions;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;

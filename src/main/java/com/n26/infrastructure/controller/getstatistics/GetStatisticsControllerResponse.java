@@ -1,6 +1,6 @@
-package com.n26.infrastructure.httpcontroller.getstatistics;
+package com.n26.infrastructure.controller.getstatistics;
 
-public class GetStatisticsResponse {
+public class GetStatisticsControllerResponse {
 
   private final String sum;
   private final String avg;
@@ -8,7 +8,7 @@ public class GetStatisticsResponse {
   private final String min;
   private final long count;
 
-  private GetStatisticsResponse(
+  GetStatisticsControllerResponse(
       String sum,
       String avg,
       String max,
@@ -21,8 +21,8 @@ public class GetStatisticsResponse {
     this.count = count;
   }
 
-  public static GetStatisticsResponse mapFrom(com.n26.usecase.getstatistics.GetStatisticsResponse statistics) {
-    return new GetStatisticsResponse(
+  public static GetStatisticsControllerResponse mapFrom(com.n26.usecase.getstatistics.GetStatisticsResponse statistics) {
+    return new GetStatisticsControllerResponse(
         statistics.getSum().toPlainString(),
         statistics.getAvg().toPlainString(),
         statistics.getMax().toPlainString(),

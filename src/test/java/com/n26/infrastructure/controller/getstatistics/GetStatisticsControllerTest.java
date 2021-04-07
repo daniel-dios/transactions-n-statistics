@@ -1,4 +1,4 @@
-package com.n26.infrastructure.httpcontroller.getstatistics;
+package com.n26.infrastructure.controller.getstatistics;
 
 import com.n26.Application;
 import com.n26.usecase.getstatistics.GetStatistics;

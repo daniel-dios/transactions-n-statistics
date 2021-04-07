@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import static com.n26.utils.DomainFactoryUtils.createStatistics;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GetStatisticsResponseTest {
+class GetStatisticsControllerResponseTest {
 
   @Test
   void shouldMapFromStatisticsToGetStatisticsResponse() {
