@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+import static com.n26.usecase.savetransaction.SaveTransactionResponse.OLDER;
+import static com.n26.usecase.savetransaction.SaveTransactionResponse.PROCESSED;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,8 +32,8 @@ public class SaveTransactionControllerTest extends ControllerTest {
       new SaveTransactionRequest(new BigDecimal("12.3343"), OffsetDateTime.parse("2018-07-17T09:59:51.312Z"));
 
   @Test
-  void shouldReturnNoContentSaveReturnsOlder() throws Exception {
-    when(saveTransaction.save(validRequest)).thenReturn(SaveTransactionResponse.OLDER);
+  void shouldReturnNoContentWhenSaveReturnsOlder() throws Exception {
+    when(saveTransaction.save(validRequest)).thenReturn(OLDER);
 
     final MockHttpServletRequestBuilder body = post("/transaction")
         .content(validRequestAsJson)
@@ -40,5 +42,18 @@ public class SaveTransactionControllerTest extends ControllerTest {
     this.mockMvc
         .perform(body)
         .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void shouldReturnCreatedWhenSaveReturnsProcessed() throws Exception {
+    when(saveTransaction.save(validRequest)).thenReturn(PROCESSED);
+
+    final MockHttpServletRequestBuilder body = post("/transaction")
+        .content(validRequestAsJson)
+        .contentType(MediaType.APPLICATION_JSON);
+
+    this.mockMvc
+        .perform(body)
+        .andExpect(status().isCreated());
   }
 }
