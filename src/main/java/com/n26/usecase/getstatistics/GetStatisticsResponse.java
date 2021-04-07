@@ -28,4 +28,24 @@ public class GetStatisticsResponse {
         statistics.getCount()
     );
   }
+
+  public BigDecimal getSum() {
+    return sum;
+  }
+
+  public BigDecimal getAvg() {
+    return avg;
+  }
+
+  public BigDecimal getMax() {
+    return max;
+  }
+
+  public BigDecimal getMin() {
+    return min;
+  }
+
+  public long getCount() {
+    return count;
+  }
 }
