@@ -32,17 +32,26 @@ public class SaveTransactionController {
 
   @PostMapping(value = "/transaction", consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> saveTransaction(@RequestBody SaveTransactionBody body) {
+    final BigDecimal amount = getAmount(body);
+    final OffsetDateTime parse = getDateTime(body);
+
+    final SaveTransactionResponse save = saveTransaction.save(new SaveTransactionRequest(amount, parse));
+
+    return status(mapToStatus(save)).build();
+  }
+
+  private OffsetDateTime getDateTime(SaveTransactionBody body) {
     try {
-      final BigDecimal amount = new BigDecimal(body.getAmount());
-      final OffsetDateTime parse = OffsetDateTime.parse(body.getTimestamp());
-
-      final SaveTransactionResponse save = saveTransaction.save(new SaveTransactionRequest(amount, parse));
-
-      return status(mapToStatus(save)).build();
-
-    } catch (NumberFormatException ex) {
-      throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
+      return OffsetDateTime.parse(body.getTimestamp());
     } catch (DateTimeException ex) {
+      throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
+    }
+  }
+
+  private BigDecimal getAmount(SaveTransactionBody body) {
+    try {
+      return new BigDecimal(body.getAmount());
+    } catch (NumberFormatException ex) {
       throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
     }
   }
