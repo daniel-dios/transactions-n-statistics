@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.status;
@@ -36,6 +37,10 @@ public class SaveTransactionController {
 
     if (save.equals(SaveTransactionResponse.PROCESSED)) {
       return status(CREATED).build();
+    }
+
+    if (save.equals(SaveTransactionResponse.FUTURE)){
+      return status(UNPROCESSABLE_ENTITY).build();
     }
 
     throw new UnsupportedOperationException();

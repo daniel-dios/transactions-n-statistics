@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+import static com.n26.usecase.savetransaction.SaveTransactionResponse.FUTURE;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.OLDER;
 import static com.n26.usecase.savetransaction.SaveTransactionResponse.PROCESSED;
 import static org.mockito.Mockito.when;
@@ -46,6 +47,15 @@ public class SaveTransactionControllerTest extends ControllerTest {
     this.mockMvc
         .perform(buildPostWithBody())
         .andExpect(status().isCreated());
+  }
+
+  @Test
+  void shouldReturnUnprocessableWhenSaveReturnsFuture() throws Exception {
+    when(saveTransaction.save(validRequest)).thenReturn(FUTURE);
+
+    this.mockMvc
+        .perform(buildPostWithBody())
+        .andExpect(status().isUnprocessableEntity());
   }
 
   private MockHttpServletRequestBuilder buildPostWithBody() {
