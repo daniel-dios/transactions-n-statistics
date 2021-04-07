@@ -88,7 +88,7 @@ public class SaveTransactionControllerTest extends ControllerTest {
   }
 
   private MockHttpServletRequestBuilder buildPostWithBody(String json) {
-    return post("/transaction")
+    return post("/transactions")
         .content(json)
         .contentType(MediaType.APPLICATION_JSON);
   }

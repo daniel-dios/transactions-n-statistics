@@ -31,7 +31,7 @@ public class SaveTransactionController {
     this.saveTransaction = saveTransaction;
   }
 
-  @PostMapping(value = "/transaction", consumes = APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/transactions", consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> saveTransaction(@RequestBody SaveTransactionBody body) {
     final BigDecimal amount = getAmount(body);
     final OffsetDateTime parse = getDateTime(body);
