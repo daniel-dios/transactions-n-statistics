@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 public final class TransactionTimestamp {
-  private static final Duration OLD_RANGE = Duration.ofSeconds(60);
+  private static final Duration MAX_RANGE = Duration.ofSeconds(60);
   private final OffsetDateTime timestamp;
 
   public TransactionTimestamp(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
@@ -18,7 +18,7 @@ public final class TransactionTimestamp {
   }
 
   public static boolean isInRange(OffsetDateTime currentTime, OffsetDateTime dateTime) {
-    return dateTime.isAfter(currentTime.minus(OLD_RANGE));
+    return dateTime.isAfter(currentTime.minus(MAX_RANGE));
   }
 
   public OffsetDateTime getValueSecondsTruncated() {
@@ -26,28 +26,20 @@ public final class TransactionTimestamp {
   }
 
   private void validateInputs(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    checkOldRange(timestamp, occurredAt);
-    checkFutureRange(timestamp, occurredAt);
+    validateOlderThanMaxRange(timestamp, occurredAt);
+    validateFuture(timestamp, occurredAt);
   }
 
-  private void checkOldRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    if (isOlderRange(timestamp, occurredAt)) {
+  private void validateOlderThanMaxRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
+    if (timestamp.isBefore(occurredAt.minus(MAX_RANGE))) {
       throw new OldTransactionTimestampException();
     }
   }
 
-  private boolean isOlderRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    return timestamp.isBefore(occurredAt.minus(OLD_RANGE));
-  }
-
-  private void checkFutureRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    if (isFutureRange(timestamp, occurredAt)) {
+  private void validateFuture(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
+    if (occurredAt.isBefore(timestamp)) {
       throw new FutureTransactionTimestampException();
     }
-  }
-
-  private boolean isFutureRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    return occurredAt.isBefore(timestamp);
   }
 
   @Override

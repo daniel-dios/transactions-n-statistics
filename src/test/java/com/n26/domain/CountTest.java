@@ -3,6 +3,7 @@ package com.n26.domain;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CountTest {
 
@@ -40,5 +41,12 @@ class CountTest {
     final Count actual = oneValue.increment();
 
     assertThat(actual).usingComparator(Count::compare).isEqualTo(new Count(2));
+  }
+
+  @Test
+  void shouldThrowIllegalArgumentExceptionWhenNegativeNumber() {
+
+    assertThatThrownBy(() -> new Count(-1))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 }

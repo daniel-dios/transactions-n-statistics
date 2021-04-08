@@ -7,6 +7,7 @@ public final class Count {
   private final long value;
 
   public Count(long value) {
+    validateInput(value);
     this.value = value;
   }
 
@@ -27,6 +28,12 @@ public final class Count {
       return 0;
     }
     return this.value > count.value ? 1 : -1;
+  }
+
+  private void validateInput(long value) {
+    if (value < 0) {
+      throw new IllegalArgumentException();
+    }
   }
 
   @Override
