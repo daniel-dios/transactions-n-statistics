@@ -24,7 +24,7 @@ public final class DomainFactoryUtils {
     );
   }
 
-  private static Amount createAmount(String value) {
+  public static Amount createAmount(String value) {
     return new Amount(new BigDecimal(value));
   }
 
