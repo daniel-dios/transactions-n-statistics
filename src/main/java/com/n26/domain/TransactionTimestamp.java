@@ -10,11 +10,11 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 
 public final class TransactionTimestamp {
   private static final Duration MAX_RANGE = Duration.ofSeconds(60);
-  private final OffsetDateTime timestamp;
+  private final OffsetDateTime value;
 
-  public TransactionTimestamp(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    validateInputs(timestamp, occurredAt);
-    this.timestamp = timestamp;
+  public TransactionTimestamp(OffsetDateTime value, OffsetDateTime occurredAt) {
+    validateInputs(value, occurredAt);
+    this.value = value;
   }
 
   public static boolean isInRange(OffsetDateTime currentTime, OffsetDateTime dateTime) {
@@ -22,22 +22,22 @@ public final class TransactionTimestamp {
   }
 
   public OffsetDateTime getValueSecondsTruncated() {
-    return timestamp.truncatedTo(SECONDS);
+    return value.truncatedTo(SECONDS);
   }
 
-  private void validateInputs(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    validateOlderThanMaxRange(timestamp, occurredAt);
-    validateFuture(timestamp, occurredAt);
+  private void validateInputs(OffsetDateTime value, OffsetDateTime occurredAt) {
+    validateOlderThanMaxRange(value, occurredAt);
+    validateFuture(value, occurredAt);
   }
 
-  private void validateOlderThanMaxRange(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    if (timestamp.isBefore(occurredAt.minus(MAX_RANGE))) {
+  private void validateOlderThanMaxRange(OffsetDateTime value, OffsetDateTime occurredAt) {
+    if (value.isBefore(occurredAt.minus(MAX_RANGE))) {
       throw new OldTransactionTimestampException();
     }
   }
 
-  private void validateFuture(OffsetDateTime timestamp, OffsetDateTime occurredAt) {
-    if (occurredAt.isBefore(timestamp)) {
+  private void validateFuture(OffsetDateTime value, OffsetDateTime occurredAt) {
+    if (occurredAt.isBefore(value)) {
       throw new FutureTransactionTimestampException();
     }
   }
@@ -53,11 +53,11 @@ public final class TransactionTimestamp {
 
     TransactionTimestamp that = (TransactionTimestamp) o;
 
-    return timestamp.equals(that.timestamp);
+    return value.equals(that.value);
   }
 
   @Override
   public int hashCode() {
-    return timestamp.hashCode();
+    return value.hashCode();
   }
 }

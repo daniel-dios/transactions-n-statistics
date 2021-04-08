@@ -88,7 +88,7 @@ class TransactionRepositoryInMemoryTest {
     final Statistics expected = createStatistics("200.000", "200.000", "200.000", 1);
     assertContainsOnly(repositoryInMemory.getStatistics(), expected);
 
-    repositoryInMemory.deleteTransactions();
+    repositoryInMemory.deleteAllTransactions();
     assertThat(repositoryInMemory.getStatistics()).isEmpty();
   }
 

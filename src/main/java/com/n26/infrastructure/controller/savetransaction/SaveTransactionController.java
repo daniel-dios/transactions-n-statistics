@@ -34,14 +34,14 @@ public class SaveTransactionController {
   @PostMapping(value = "/transactions", consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> saveTransaction(@RequestBody SaveTransactionBody body) {
     final BigDecimal amount = getAmount(body);
-    final OffsetDateTime parse = getDateTime(body);
+    final OffsetDateTime timestamp = getTimestamp(body);
 
-    final SaveTransactionResponse result = saveTransaction.save(new SaveTransactionRequest(amount, parse));
+    final SaveTransactionResponse result = saveTransaction.save(new SaveTransactionRequest(amount, timestamp));
 
     return mapToResponse(result);
   }
 
-  private OffsetDateTime getDateTime(SaveTransactionBody body) {
+  private OffsetDateTime getTimestamp(SaveTransactionBody body) {
     try {
       final OffsetDateTime parsed = OffsetDateTime.parse(body.getTimestamp());
       if (parsed.getOffset().equals(UTC)) {

@@ -17,8 +17,8 @@ class GetStatisticsResponseTest {
     final GetStatisticsResponse actual = GetStatisticsResponse.mapToGetStatisticsResponse(statistics);
 
     final GetStatisticsResponse expected = new GetStatisticsResponse(
-        new BigDecimal("17.00"),
-        new BigDecimal("5.67"),
+        new BigDecimal("17.00"), // 6 + 6 + 1 = 17
+        new BigDecimal("5.67"), // (6 + 6 + 1 / 3) = 5.6666...
         new BigDecimal("6.00"),
         new BigDecimal("1.00"),
         3 // 6 + 6 + 1

@@ -30,10 +30,11 @@ public final class Statistics {
   }
 
   public Statistics aggregate(Transaction transaction) {
+    final Amount amount = transaction.getAmount();
     return new Statistics(
-        sum.sum(transaction.getAmount()),
-        max.max(transaction.getAmount()),
-        isEmpty() ? transaction.getAmount() : min.min(transaction.getAmount()),
+        sum.sum(amount),
+        max.max(amount),
+        isEmpty() ? amount : min.min(amount),
         count.increment()
     );
   }

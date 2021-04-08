@@ -15,17 +15,12 @@ public final class DomainFactoryUtils {
     // Utility factory class for tests
   }
 
-  public static Statistics createStatistics(String sum, String max, String min, int count) {
-    return new Statistics(
-        createAmount(sum),
-        createAmount(max),
-        createAmount(min),
-        new Count(count)
-    );
-  }
-
   public static Amount createAmount(String value) {
     return new Amount(new BigDecimal(value));
+  }
+
+  public static Statistics createStatistics(String sum, String max, String min, int count) {
+    return new Statistics(createAmount(sum), createAmount(max), createAmount(min), new Count(count));
   }
 
   public static Transaction createTransaction(String amountVal, OffsetDateTime timeStamp, OffsetDateTime occurredAt) {

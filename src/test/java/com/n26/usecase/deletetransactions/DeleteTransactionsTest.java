@@ -15,6 +15,6 @@ class DeleteTransactionsTest {
 
     deleteTransactions.deleteTransactions();
 
-    verify(transactionRepository).deleteTransactions();
+    verify(transactionRepository).deleteAllTransactions();
   }
 }

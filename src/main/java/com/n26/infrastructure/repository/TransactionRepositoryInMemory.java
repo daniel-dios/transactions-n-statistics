@@ -11,9 +11,9 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static com.n26.domain.Statistics.EMPTY_STATISTICS;
+import static java.util.stream.Collectors.toList;
 
 public class TransactionRepositoryInMemory implements TransactionRepository, StatisticsRepository {
 
@@ -33,7 +33,7 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
         .stream()
         .filter(entry -> TransactionTimestamp.isInRange(currentTime, entry.getKey()))
         .map(Map.Entry::getValue)
-        .collect(Collectors.toList());
+        .collect(toList());
   }
 
   @Override
@@ -51,7 +51,7 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
   }
 
   @Override
-  public void deleteTransactions() {
+  public void deleteAllTransactions() {
     statisticsMap.clear();
   }
 }

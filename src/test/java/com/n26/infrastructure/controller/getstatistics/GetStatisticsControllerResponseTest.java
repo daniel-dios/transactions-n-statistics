@@ -20,21 +20,14 @@ class GetStatisticsControllerResponseTest {
   void shouldMapToExpected() throws JsonProcessingException, JSONException {
     final GetStatisticsResponse getStatisticsResponse =
         mapToGetStatisticsResponse(createStatistics("24.468", "12.234", "12.234", 2));
-    final GetStatisticsControllerResponse expected =
-        new GetStatisticsControllerResponse("24.47", "12.23", "12.23", "12.23", 2);
-    final String expectedAsJson = "{" +
-        "\"sum\":\"24.47\"," +
-        "\"avg\":\"12.23\"," +
-        "\"max\":\"12.23\"," +
-        "\"min\":\"12.23\"," +
-        "\"count\":2" +
-        "}";
-
 
     final GetStatisticsControllerResponse actual = mapFrom(getStatisticsResponse);
     final String actualAsJson = objectMapper.writeValueAsString(actual);
 
-    assertThat(actual).isEqualToComparingFieldByField(expected);
+    assertThat(actual)
+        .isEqualToComparingFieldByField(new GetStatisticsControllerResponse("24.47", "12.23", "12.23", "12.23", 2));
+    final String expectedAsJson =
+        "{\"sum\":\"24.47\",\"avg\":\"12.23\",\"max\":\"12.23\",\"min\":\"12.23\",\"count\":2}";
     assertEquals(expectedAsJson, actualAsJson, true);
   }
 }

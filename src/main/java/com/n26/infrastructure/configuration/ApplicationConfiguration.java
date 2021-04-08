@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfiguration {
 
   @Bean
-  public DeleteTransactions deleteTransactions(TransactionRepository transactionsRepository) {
-    return new DeleteTransactions(transactionsRepository);
+  public TimeService timeService() {
+    return new TimeService();
   }
 
   @Bean
@@ -24,8 +24,8 @@ public class ApplicationConfiguration {
   }
 
   @Bean
-  public TimeService timeService() {
-    return new TimeService();
+  public DeleteTransactions deleteTransactions(TransactionRepository transactionsRepository) {
+    return new DeleteTransactions(transactionsRepository);
   }
 
   @Bean

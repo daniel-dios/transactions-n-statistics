@@ -35,13 +35,6 @@ class SaveTransactionTest {
   private final TransactionRepository transactionRepository = Mockito.mock(TransactionRepository.class);
   private final SaveTransaction saveTransaction = new SaveTransaction(timeService, transactionRepository);
 
-  private static Stream<Arguments> getInputOutPut() {
-    return Stream.of(
-        Arguments.of(new SaveTransactionRequest(AMOUNT, OCCURRED_AT.minus(Duration.ofSeconds(61))), OLDER),
-        Arguments.of(new SaveTransactionRequest(AMOUNT, OCCURRED_AT.plus(Duration.ofSeconds(1))), FUTURE)
-    );
-  }
-
   @ParameterizedTest
   @MethodSource("getInputOutPut")
   void shouldReturnExpectedAndNotPersistWhenRequestIsOutOfRange(
@@ -69,5 +62,12 @@ class SaveTransactionTest {
               .isEqualToComparingFieldByField(createTransaction(AMOUNT_VAL, inRangeTimestamp, OCCURRED_AT));
           return true;
         }));
+  }
+
+  private static Stream<Arguments> getInputOutPut() {
+    return Stream.of(
+        Arguments.of(new SaveTransactionRequest(AMOUNT, OCCURRED_AT.minus(Duration.ofSeconds(61))), OLDER),
+        Arguments.of(new SaveTransactionRequest(AMOUNT, OCCURRED_AT.plus(Duration.ofSeconds(1))), FUTURE)
+    );
   }
 }

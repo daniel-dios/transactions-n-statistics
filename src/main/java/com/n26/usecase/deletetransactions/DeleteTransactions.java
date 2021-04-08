@@ -10,6 +10,6 @@ public class DeleteTransactions {
   }
 
   public void deleteTransactions() {
-    transactionRepository.deleteTransactions();
+    transactionRepository.deleteAllTransactions();
   }
 }

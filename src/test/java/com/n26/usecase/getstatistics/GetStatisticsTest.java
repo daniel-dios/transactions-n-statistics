@@ -34,11 +34,11 @@ public class GetStatisticsTest {
   void shouldReturnAggregateStatisticsWhenThereIsStatisticsInRepo() {
     final StatisticsRepository statisticsRepository = Mockito.mock(StatisticsRepository.class);
     final List<Statistics> statisticsList = getStatisticsList(
-        createStatistics("5.00", "3.00", "2.00", 2),
-        createStatistics("123.75", "122.00", "1.75", 10),
-        createStatistics("111.00", "1.00", "1.00", 111));
+        createStatistics("5.00", "3.00", "2.00000000", 2),
+        createStatistics("125.9555", "122.555", "1.75", 10),
+        createStatistics("111.00", "1.00", "1", 111));
     final Statistics expected =
-        createStatistics("239.75", "122.00", "1.00", 123);
+        createStatistics("241.9555", "122.555", "1", 123);
     when(statisticsRepository.getStatistics()).thenReturn(statisticsList);
     final GetStatistics getStatistics = new GetStatistics(statisticsRepository);
 
