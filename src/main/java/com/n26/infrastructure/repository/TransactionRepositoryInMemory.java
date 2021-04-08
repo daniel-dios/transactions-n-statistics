@@ -6,6 +6,8 @@ import com.n26.domain.Transaction;
 import com.n26.domain.TransactionRepository;
 import com.n26.domain.TransactionTimestamp;
 import com.n26.domain.service.TimeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -16,6 +18,7 @@ import static com.n26.domain.Statistics.EMPTY_STATISTICS;
 import static java.util.stream.Collectors.toList;
 
 public class TransactionRepositoryInMemory implements TransactionRepository, StatisticsRepository {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TransactionRepositoryInMemory.class);
 
   private final Map<OffsetDateTime, Statistics> statisticsMap = new ConcurrentHashMap<>();
   private final TimeService timeService;
@@ -53,5 +56,7 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
   @Override
   public void deleteAllTransactions() {
     statisticsMap.clear();
+
+    LOGGER.info("Transactions deleted.");
   }
 }
