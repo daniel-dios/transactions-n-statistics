@@ -9,7 +9,7 @@ import com.n26.domain.TransactionTimestamp;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-public class DomainFactoryUtils {
+public final class DomainFactoryUtils {
 
   private DomainFactoryUtils() {
     // Utility factory class for tests
@@ -24,7 +24,7 @@ public class DomainFactoryUtils {
     );
   }
 
-  public static Amount createAmount(String value) {
+  private static Amount createAmount(String value) {
     return new Amount(new BigDecimal(value));
   }
 

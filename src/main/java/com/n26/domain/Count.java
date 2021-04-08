@@ -14,6 +14,10 @@ public final class Count {
     return new Count(value + count.value);
   }
 
+  public Count increment() {
+    return new Count(this.value + 1);
+  }
+
   public long getValue() {
     return value;
   }

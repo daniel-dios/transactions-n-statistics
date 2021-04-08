@@ -63,20 +63,18 @@ class AmountTest {
   void shouldDivide() {
     final Amount a = new Amount(new BigDecimal("5"));
 
-    final BigDecimal actual = a.divide(3);
+    final Amount actual = a.divide(3);
 
-    assertThat(actual)
-        .isEqualTo(new BigDecimal("1.67"));
+    assertThat(actual).isEqualTo(new Amount(new BigDecimal("1.67")));
   }
 
   @Test
   void shouldReturnZeroIfCountIsZero() {
     final Amount a = new Amount(new BigDecimal("5"));
 
-    final BigDecimal actual = a.divide(0);
+    final Amount actual = a.divide(0);
 
-    assertThat(actual)
-        .isEqualTo(new BigDecimal("0.00"));
+    assertThat(actual).isEqualTo(new Amount(new BigDecimal("0.00")));
   }
 
   @Test

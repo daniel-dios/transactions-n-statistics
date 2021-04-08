@@ -34,7 +34,7 @@ public final class Statistics {
         sum.sum(transaction.getAmount()),
         max.max(transaction.getAmount()),
         isEmpty() ? transaction.getAmount() : min.min(transaction.getAmount()),
-        count.add(Count.ONE)
+        count.increment()
     );
   }
 
@@ -43,7 +43,7 @@ public final class Statistics {
   }
 
   public BigDecimal getAvgRound() {
-    return sum.divide(count.getValue());
+    return sum.divide(count.getValue()).getRoundValue();
   }
 
   public BigDecimal getMaxRound() {

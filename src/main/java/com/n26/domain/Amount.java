@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public final class Amount {
   public static final Amount ZERO = new Amount(BigDecimal.ZERO);
+  private static final int ROUND_POLICY = BigDecimal.ROUND_HALF_UP;
 
   private final BigDecimal value;
 
@@ -12,17 +13,19 @@ public final class Amount {
   }
 
   public BigDecimal getRoundValue() {
-    return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+    return value.setScale(2, ROUND_POLICY);
   }
 
   public Amount sum(Amount toSum) {
     return new Amount(value.add(toSum.value));
   }
 
-  public BigDecimal divide(long value) {
-    return value == 0
-        ? new BigDecimal("0.00")
-        : this.value.divide(new BigDecimal(value), 2, BigDecimal.ROUND_HALF_UP);
+  public Amount divide(long divisor) {
+    if (divisor == 0) {
+      return new Amount(new BigDecimal("0.00"));
+    } else {
+      return new Amount(value.divide(new BigDecimal(divisor), 2, ROUND_POLICY));
+    }
   }
 
   public Amount max(Amount toCompare) {

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import static com.n26.utils.DomainFactoryUtils.createStatistics;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GetStatisticsControllerResponseTest {
+class GetStatisticsResponseTest {
 
   @Test
   void shouldMapFromStatisticsToGetStatisticsResponse() {
@@ -24,7 +24,6 @@ class GetStatisticsControllerResponseTest {
         3 // 6 + 6 + 1
     );
 
-    assertThat(actual)
-        .isEqualToComparingFieldByField(expected);
+    assertThat(actual).isEqualToComparingFieldByField(expected);
   }
 }

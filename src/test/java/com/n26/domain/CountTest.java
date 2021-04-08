@@ -32,4 +32,13 @@ class CountTest {
     assertThat(small.compare(big)).isEqualTo(-1);
     assertThat(big.compare(small)).isEqualTo(1);
   }
+
+  @Test
+  void shouldIncrement() {
+    final Count oneValue = new Count(1);
+
+    final Count actual = oneValue.increment();
+
+    assertThat(actual).usingComparator(Count::compare).isEqualTo(new Count(2));
+  }
 }
