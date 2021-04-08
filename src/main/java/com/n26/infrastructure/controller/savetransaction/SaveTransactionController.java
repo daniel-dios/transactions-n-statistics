@@ -3,7 +3,6 @@ package com.n26.infrastructure.controller.savetransaction;
 import com.n26.usecase.savetransaction.SaveTransaction;
 import com.n26.usecase.savetransaction.SaveTransactionRequest;
 import com.n26.usecase.savetransaction.SaveTransactionResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,11 +15,12 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.IM_USED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.status;
+import static org.springframework.http.ResponseEntity.unprocessableEntity;
 
 @RestController
 public class SaveTransactionController {
@@ -36,9 +36,9 @@ public class SaveTransactionController {
     final BigDecimal amount = getAmount(body);
     final OffsetDateTime parse = getDateTime(body);
 
-    final SaveTransactionResponse save = saveTransaction.save(new SaveTransactionRequest(amount, parse));
+    final SaveTransactionResponse result = saveTransaction.save(new SaveTransactionRequest(amount, parse));
 
-    return status(mapToStatus(save)).build();
+    return mapToResponse(result);
   }
 
   private OffsetDateTime getDateTime(SaveTransactionBody body) {
@@ -61,17 +61,23 @@ public class SaveTransactionController {
     }
   }
 
-  private HttpStatus mapToStatus(SaveTransactionResponse save) {
+  /*
+   * Hi! Since this challenge was written in java 8 there is no possibility to avoid that default return
+   * statement even if we are mapping an enum with a switch clause, the code is not reachable because all
+   * enum values are mapped. Next java versions are taking this into account and avoiding this default when
+   * switching enums.
+   */
+  private ResponseEntity<Object> mapToResponse(SaveTransactionResponse save) {
     switch (save) {
       case PROCESSED:
-        return CREATED;
+        return status(CREATED).build();
       case OLDER:
-        return NO_CONTENT;
+        return noContent().build();
       case FUTURE:
-        return UNPROCESSABLE_ENTITY;
+        return unprocessableEntity().build();
+      default:
+        // compiler wants it :_(
+        return status(IM_USED).build();
     }
-
-    // its not gonna happen but java 8...
-    return I_AM_A_TEAPOT;
   }
 }
