@@ -3,6 +3,8 @@ package com.n26.infrastructure.controller.savetransaction;
 import com.n26.usecase.savetransaction.SaveTransaction;
 import com.n26.usecase.savetransaction.SaveTransactionRequest;
 import com.n26.usecase.savetransaction.SaveTransactionResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,7 @@ import static org.springframework.http.ResponseEntity.unprocessableEntity;
 
 @RestController
 public class SaveTransactionController {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SaveTransactionController.class);
 
   private final SaveTransaction saveTransaction;
 
@@ -33,30 +36,36 @@ public class SaveTransactionController {
 
   @PostMapping(value = "/transactions", consumes = APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> saveTransaction(@RequestBody SaveTransactionBody body) {
-    final BigDecimal amount = getAmount(body);
-    final OffsetDateTime timestamp = getTimestamp(body);
+    LOGGER.info("Received save transaction request amount.");
+
+    final BigDecimal amount = getAmount(body.getAmount());
+    final OffsetDateTime timestamp = getTimestamp(body.getTimestamp());
 
     final SaveTransactionResponse result = saveTransaction.save(new SaveTransactionRequest(amount, timestamp));
 
     return mapToResponse(result);
   }
 
-  private OffsetDateTime getTimestamp(SaveTransactionBody body) {
+  private OffsetDateTime getTimestamp(String timestamp) {
     try {
-      final OffsetDateTime parsed = OffsetDateTime.parse(body.getTimestamp());
+      final OffsetDateTime parsed = OffsetDateTime.parse(timestamp);
       if (parsed.getOffset().equals(UTC)) {
         return parsed;
       }
+      LOGGER.info("Received non UTC timestamp {}.", timestamp);
       throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
     } catch (DateTimeException ex) {
+      LOGGER.info("Received non parsable timestamp {}.", timestamp);
+
       throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
     }
   }
 
-  private BigDecimal getAmount(SaveTransactionBody body) {
+  private BigDecimal getAmount(String amount) {
     try {
-      return new BigDecimal(body.getAmount());
+      return new BigDecimal(amount);
     } catch (NumberFormatException ex) {
+      LOGGER.info("Received incorrect amount {}.", amount);
       throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
     }
   }

@@ -48,11 +48,15 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
         EMPTY_STATISTICS.aggregate(transaction),
         Statistics::merge);
 
+    LOGGER.info("Transaction saved.");
+
     statisticsMap
         .keySet()
         .stream()
         .filter(entry -> !TransactionTimestamp.isInRange(timeService.getCurrentTime(), entry))
         .forEach(statisticsMap::remove);
+
+    LOGGER.info("Old statistics removed.");
   }
 
   @Override
