@@ -31,6 +31,8 @@ public class TransactionRepositoryInMemory implements TransactionRepository, Sta
   public List<Statistics> getStatistics() {
     final OffsetDateTime currentTime = timeService.getCurrentTime();
 
+    LOGGER.info("Returning statistics at {}.", currentTime);
+
     return statisticsMap
         .entrySet()
         .stream()

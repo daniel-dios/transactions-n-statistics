@@ -2,8 +2,12 @@ package com.n26.usecase.getstatistics;
 
 import com.n26.domain.Statistics;
 import com.n26.domain.StatisticsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GetStatistics {
+  private static final Logger LOGGER = LoggerFactory.getLogger(GetStatistics.class);
+
   private final StatisticsRepository statisticsRepository;
 
   public GetStatistics(StatisticsRepository statisticsRepository) {
@@ -11,6 +15,8 @@ public class GetStatistics {
   }
 
   public GetStatisticsResponse getStatistics() {
+    LOGGER.info("Get statistics.");
+
     return
         GetStatisticsResponse.mapToGetStatisticsResponse(
             statisticsRepository
