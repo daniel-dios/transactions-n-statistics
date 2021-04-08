@@ -78,4 +78,17 @@ class AmountTest {
     assertThat(actual)
         .isEqualTo(new BigDecimal("0.00"));
   }
+
+  @Test
+  void shouldCompare() {
+    assertThat(new Amount(new BigDecimal("1.00")))
+        .usingComparator(Amount::compare)
+        .isEqualTo(new Amount(new BigDecimal("1")));
+
+    final Amount small = new Amount(new BigDecimal("1"));
+    final Amount big = new Amount(new BigDecimal("1000.000"));
+
+    assertThat(small.compare(big)).isEqualTo(-1);
+    assertThat(big.compare(small)).isEqualTo(1);
+  }
 }

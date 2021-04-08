@@ -22,4 +22,14 @@ class CountTest {
         .isEqualTo(b.add(a))
         .isEqualTo(new Count(3));
   }
+
+  @Test
+  void shouldCompare() {
+    final Count small = new Count(1);
+    final Count big = new Count(1000);
+
+    assertThat(small).usingComparator(Count::compare).isEqualTo(small);
+    assertThat(small.compare(big)).isEqualTo(-1);
+    assertThat(big.compare(small)).isEqualTo(1);
+  }
 }

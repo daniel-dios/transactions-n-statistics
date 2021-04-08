@@ -33,6 +33,10 @@ public final class Amount {
     return new Amount(value.min(toCompare.value));
   }
 
+  public int compare(Amount b) {
+    return this.value.compareTo(b.value);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -42,9 +46,7 @@ public final class Amount {
       return false;
     }
 
-    Amount amount = (Amount) o;
-
-    return value.equals(amount.value);
+    return this.compare((Amount) o) == 0;
   }
 
   @Override

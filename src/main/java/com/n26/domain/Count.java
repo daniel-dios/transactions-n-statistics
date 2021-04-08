@@ -2,6 +2,8 @@ package com.n26.domain;
 
 public final class Count {
   public static final Count ZERO = new Count(0);
+  public static final Count ONE = new Count(1);
+
   private final long value;
 
   public Count(long value) {
@@ -16,6 +18,13 @@ public final class Count {
     return value;
   }
 
+  public int compare(Count count) {
+    if (this.value == count.value) {
+      return 0;
+    }
+    return this.value > count.value ? 1 : -1;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -25,9 +34,7 @@ public final class Count {
       return false;
     }
 
-    Count count = (Count) o;
-
-    return value == count.value;
+    return this.compare((Count) o) == 0;
   }
 
   @Override

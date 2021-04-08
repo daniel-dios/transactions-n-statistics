@@ -34,7 +34,7 @@ public final class Statistics {
         sum.sum(transaction.getAmount()),
         max.max(transaction.getAmount()),
         isEmpty() ? transaction.getAmount() : min.min(transaction.getAmount()),
-        count.add(new Count(1))
+        count.add(Count.ONE)
     );
   }
 
@@ -66,28 +66,39 @@ public final class Statistics {
   }
 
   private void validateInputs(Amount sum, Amount max, Amount min, Count count) {
-    if (checkMaxIsGreaterThanMin(max, min)
-        || checkSumIsGreaterThanMax(sum, max)
-        || checkSumIsBiggerThanMaxMin(sum, max, min, count)
-        || checkSumIsZeroWhenCountIsZero(sum, count)) {
+    if (minIsGreaterThanMax(max, min)
+        || maxIsGreaterThanSum(sum, max)
+        || maxPlusMinAreGreaterThanSumWhenMoreThanOneCount(sum, min.sum(max), count)
+        || sumIsZeroWhenCountIsNotZero(sum, count)) {
       throw new WrongStatisticsInputs();
     }
   }
 
+  private boolean sumIsZeroWhenCountIsNotZero(Amount sum, Count count) {
+    return checkSumIsZeroWhenCountIsZero(sum, count);
+  }
+
+  private boolean maxPlusMinAreGreaterThanSumWhenMoreThanOneCount(Amount sum, Amount total, Count count) {
+    return theresIsOnlyOne(count) && secondGreaterThanFirst(sum, total);
+  }
+
+  private boolean maxIsGreaterThanSum(Amount sum, Amount max) {
+    return secondGreaterThanFirst(sum, max);
+  }
+
+  private boolean minIsGreaterThanMax(Amount max, Amount min) {
+    return secondGreaterThanFirst(max, min);
+  }
+
+  private boolean secondGreaterThanFirst(Amount a, Amount b) {
+    return b.compare(a) > 0;
+  }
+
+  private boolean theresIsOnlyOne(Count count) {
+    return count.compare(Count.ONE) > 0;
+  }
+
   private boolean checkSumIsZeroWhenCountIsZero(Amount sum, Count count) {
-    return (count.equals(Count.ZERO) && !sum.equals(Amount.ZERO));
-  }
-
-  private boolean checkSumIsBiggerThanMaxMin(Amount sum, Amount max, Amount min, Count count) {
-    final Amount total = max.sum(min);
-    return (count.getValue() > 1 && !total.equals(sum) && sum.min(total).equals(sum));
-  }
-
-  private boolean checkSumIsGreaterThanMax(Amount sum, Amount max) {
-    return (!sum.equals(max) && sum.min(max).equals(sum));
-  }
-
-  private boolean checkMaxIsGreaterThanMin(Amount max, Amount min) {
-    return (!max.equals(min) && max.min(min).equals(max));
+    return (count.compare(Count.ZERO) == 0 && sum.compare(Amount.ZERO) != 0);
   }
 }
