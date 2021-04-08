@@ -9,7 +9,7 @@ public class DeleteTransactions {
     this.transactionRepository = transactionRepository;
   }
 
-  public void deleteTransactions(){
+  public void deleteTransactions() {
     transactionRepository.deleteTransactions();
   }
 }

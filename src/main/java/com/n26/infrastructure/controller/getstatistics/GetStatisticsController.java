@@ -19,7 +19,7 @@ public class GetStatisticsController {
 
   @GetMapping(value = "/statistics", produces = APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  public GetStatisticsControllerResponse getStatistics(){
+  public GetStatisticsControllerResponse getStatistics() {
     return GetStatisticsControllerResponse.mapFrom(getStatistics.getStatistics());
   }
 }

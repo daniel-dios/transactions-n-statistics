@@ -1,8 +1,8 @@
 package com.n26.infrastructure.repository;
 
 import com.n26.domain.Statistics;
-import com.n26.domain.service.TimeService;
 import com.n26.domain.Transaction;
+import com.n26.domain.service.TimeService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -18,13 +18,14 @@ import static org.mockito.Mockito.when;
 class TransactionRepositoryInMemoryTest {
 
   private static final OffsetDateTime TIMESTAMP = OffsetDateTime.parse("2018-07-17T09:59:51.312Z");
+  private static final Duration THIRTY_SECONDS = Duration.ofSeconds(30);
 
   private final TimeService timeService = Mockito.mock(TimeService.class);
   private final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
 
   @Test
   void shouldSaveOneTransaction() {
-    final OffsetDateTime inRangeTimestamp = TIMESTAMP.plus(Duration.ofSeconds(30));
+    final OffsetDateTime inRangeTimestamp = TIMESTAMP.plus(THIRTY_SECONDS);
     when(timeService.getCurrentTime()).thenReturn(inRangeTimestamp);
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
 
@@ -48,7 +49,7 @@ class TransactionRepositoryInMemoryTest {
 
   @Test
   void shouldMergeTransactionsWhenTheyAreInSameSecond() {
-    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(THIRTY_SECONDS));
     final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
     final Transaction otherTransaction = createValidTransaction("100.00", TIMESTAMP.minus(Duration.ofMillis(10)), 10);
@@ -62,24 +63,24 @@ class TransactionRepositoryInMemoryTest {
 
   @Test
   void shouldDeleteOutOfRangeStoredEntries() {
-    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(THIRTY_SECONDS));
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
     repositoryInMemory.save(transaction);
 
     final Transaction otherTransaction = createValidTransaction("100.00", TIMESTAMP.plus(Duration.ofHours(1)), 30);
-    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30).plus(Duration.ofHours(1))));
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(THIRTY_SECONDS.plus(Duration.ofHours(1))));
     repositoryInMemory.save(otherTransaction);
 
     final Statistics expected = createStatistics("100.00", "100.00", "100.00", 1);
     assertContainsOnly(repositoryInMemory.getStatistics(), expected);
 
-    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(THIRTY_SECONDS));
     assertContainsOnly(repositoryInMemory.getStatistics(), expected);
   }
 
   @Test
   void shouldDeleteAllTransactions() {
-    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(Duration.ofSeconds(30)));
+    when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(THIRTY_SECONDS));
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
 
     repositoryInMemory.save(transaction);

@@ -1,5 +1,7 @@
 package com.n26.infrastructure.controller.getstatistics;
 
+import com.n26.usecase.getstatistics.GetStatisticsResponse;
+
 public class GetStatisticsControllerResponse {
 
   private final String sum;
@@ -21,7 +23,7 @@ public class GetStatisticsControllerResponse {
     this.count = count;
   }
 
-  public static GetStatisticsControllerResponse mapFrom(com.n26.usecase.getstatistics.GetStatisticsResponse statistics) {
+  public static GetStatisticsControllerResponse mapFrom(GetStatisticsResponse statistics) {
     return new GetStatisticsControllerResponse(
         statistics.getSum().toPlainString(),
         statistics.getAvg().toPlainString(),

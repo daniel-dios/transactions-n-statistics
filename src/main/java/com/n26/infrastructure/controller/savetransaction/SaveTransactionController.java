@@ -12,8 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
+import static java.time.ZoneOffset.UTC;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.IM_USED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
@@ -44,7 +44,7 @@ public class SaveTransactionController {
   private OffsetDateTime getDateTime(SaveTransactionBody body) {
     try {
       final OffsetDateTime parsed = OffsetDateTime.parse(body.getTimestamp());
-      if (parsed.getOffset().equals(ZoneOffset.UTC)){
+      if (parsed.getOffset().equals(UTC)) {
         return parsed;
       }
       throw new ResponseStatusException(UNPROCESSABLE_ENTITY);
