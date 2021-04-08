@@ -1,84 +1,65 @@
 # Transactions statistics - Senior Engineer
 
-## Requirements
+## About the challenge
 
-These are the additional requirements for the solution:
+I see challenge excellent, transactions contexts, some maths (accuracy) problems, concurrency, and Big O thing 😬.
+I've applied domain-driven design with hexagonal architecture (use case, domain, and infra). Also, I've followed TDD,
+code coverage is ~95% 😇.
 
-- You are free to choose any JVM language to complete the challenge in, but
-your application has to run in Maven.
-- The API has to be **threadsafe** with concurrent requests.
-- The POST /transactions and GET /statistics endpoints **MUST execute in
-constant time and memory ie O(1)**. Scheduled cleanup is not sufficient
-- The solution has to work without a database (this also applies to in-memory
-databases).
-- Unit tests are mandatory.
-- mvn clean install and mvn clean integration-test must complete successfully.
-- Please ensure that no changes are made to the src/it folder.
-- In addition to passing the tests, the solution must be at a quality level that you
-would be comfortable enough to put in production.
+**BTW, a big thank you to the one who created the integration test set, they were super helpful!!**
 
-## Problem challenge
+## 🐝 Hexagonal
 
-We would like to have a **restful** API for our statistics. The main use case for the API is to calculate realtime statistics for the last 60 seconds of transactions.
-The API needs the following endpoints:
-- *POST /transactions*: called every time a transaction is made.
-- *GET /statistics*: returns the statistic based of the transactions of the last 60
-seconds.
-- *DELETE /transactions*: deletes all transactions.
-You can complete the challenge offline using an IDE of your choice. To download the application skeleton, please enable Use Git in the editor and follow the instructions on screen. Please make sure you test your solution where possible before submitting. 
-  
-## Specs
+### 👔 Domain
 
-### POST /transactions
-This endpoint is called to create a new transaction. It MUST execute in constant time and memory (O(1)).
-Body:
-```
-{
- "amount": "12.3343",
- "timestamp": "2018-07-17T09:59:51.312Z"
-}
-```
-Where:
-- *amount*: transaction amount; a string of arbitrary length that is parsable as a
-BigDecimal.
-- *timestamp*: transaction time in the ISO 8601 format
-YYYY-MM-DDThh:mm:ss.sssZ in the UTC timezone (this is not the current timestamp).
+I have all the objects and logic for my domain here. Everything related to business that may change in future iterations
 
-Returns: Empty body with one of the following:
-- 201, in case of success.
-- 204, if the transaction is older than 60 seconds.
-- 400, if the JSON is invalid.
-- 422, if any of the fields are not parsable, or the transaction date is in the
-future.
+- **💰Amount:** This object is big decimal container. It's the one that owns the logic about calculating min, max, sum, and divide operations. 
+  In order to **don't lose precision**, it keeps all the decimals but when somebody asks for its value it returns ROUND_HALF_UP.
 
-### GET /statistics
 
-This endpoint returns the statistics based on the transactions that happened in the last 60 seconds. It MUST execute in constant time and memory (O(1)).
-Returns:
-```
-{
- "sum": "1000.00",
- "avg": "100.53",
- "max": "200000.49",
- "min": "50.23",
- "count": 10
-}
-```
-Where:
-- *sum*: a BigDecimal specifying the total sum of transaction value in the last 60
-seconds.
-- *avg*: a BigDecimal specifying the average amount of transaction value in the
-last 60 seconds.
-- *max*: a BigDecimal specifying single highest transaction value in the last 60
-seconds.
-- *min*: a BigDecimal specifying single lowest transaction value in the last 60
-seconds.
-- *count*: a long specifying the total number of transactions that happened in
-the last 60 seconds.
-  
-All BigDecimal values always contain exactly two decimal places and use `HALF_ROUND_UP` rounding. eg: 10.345 is returned as 10.35, 10.8 is returned as 10.80.
+- **⏰TransactionTimestamp:** This object is the one that validates if a timestamp is in the last 60s range. As with the amount object, it returns its value with SECONDS truncated (*)
 
-### DELETE /transactions
-This endpoint causes all existing transactions to be deleted
 
-The endpoint should accept an empty request body and return a 204 status code.
+- **🤝Transaction:** An amount, and the transaction time stamp.
+
+
+- **🐜Count:** Positive long wrapper, they can be added, incremented, and compared.
+
+
+- **📊Statistics:** This object contains sum, min, max, and count values: 4 amounts and 1 count. They have the knowledge to "aggregate" a transaction (will return a new object I don't like mutability 🙅), and the ability (logic) to be merged between them.
+
+
+### 🏗 Infrastructure
+
+You will see three things:
+
+- **🧮Configuration:** all beans creation.
+
+
+- **🕹Controllers:** one per use case, why? because I don't see any value in injecting save use case in delete all controller. Easy to test and mock and clean dependency injection.
+
+
+- **🗂Repository:** domain repository implementations, in this case I've used in memory one.
+
+### 🔥 Use cases
+
+There are three use cases, save transactions, delete all transactions and get statistics.
+I like to put all my logic about validating requests, create and "use" the domain objects call repositories, blablaba. (cos they are use cases, no? 🤔).
+
+## 🧩 Solution
+
+### ☄️ Concurrency
+
+In order to be thread-safe, I've decided to use in my in-memory repository a concurrent hashmap to put (merge) there my statistics. I was about to use a reentrant lock that locks/unlocks the map but this map implementation is enough.
+### ⏳ O(1)
+
+To be constant in time and space I've decided to use the following algorithm:
+Every transaction will be saved in a map with a bucket key referred to as the timestamp truncated by a second.
+The trick is I'm not saving the transaction, I'm aggregating the transaction amount to the statistics of that second (keymap),
+if there was no previous one, it will aggregate to empty statistics (Using the merge map method).
+
+With this, I guarantee the map will never contain an infinite number of entries. Actually will contain 60 as max.
+Save method will delete old entries and get will filter the ones inside the range. So O(60) -> O(1)
+
+What happen if there is no more saves in a certain time window? Well, the map won't grow up, and get will filter out those keys.
