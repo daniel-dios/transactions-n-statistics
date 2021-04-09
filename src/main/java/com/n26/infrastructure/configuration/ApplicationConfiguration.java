@@ -3,7 +3,7 @@ package com.n26.infrastructure.configuration;
 import com.n26.domain.StatisticsRepository;
 import com.n26.domain.TransactionRepository;
 import com.n26.domain.service.TimeService;
-import com.n26.infrastructure.repository.TransactionRepositoryInMemory;
+import com.n26.infrastructure.repository.TransactionStatisticsInMemoryRepository;
 import com.n26.usecase.deletetransactions.DeleteTransactions;
 import com.n26.usecase.getstatistics.GetStatistics;
 import com.n26.usecase.savetransaction.SaveTransaction;
@@ -19,8 +19,8 @@ public class ApplicationConfiguration {
   }
 
   @Bean
-  public TransactionRepositoryInMemory transactionRepository(TimeService timeService) {
-    return new TransactionRepositoryInMemory(timeService);
+  public TransactionStatisticsInMemoryRepository transactionRepository(TimeService timeService) {
+    return new TransactionStatisticsInMemoryRepository(timeService);
   }
 
   @Bean

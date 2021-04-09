@@ -17,13 +17,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.n26.domain.Statistics.EMPTY_STATISTICS;
 import static java.util.stream.Collectors.toList;
 
-public class TransactionRepositoryInMemory implements TransactionRepository, StatisticsRepository {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TransactionRepositoryInMemory.class);
+public class TransactionStatisticsInMemoryRepository implements TransactionRepository, StatisticsRepository {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TransactionStatisticsInMemoryRepository.class);
 
   private final Map<OffsetDateTime, Statistics> statisticsMap = new ConcurrentHashMap<>();
   private final TimeService timeService;
 
-  public TransactionRepositoryInMemory(TimeService timeService) {
+  public TransactionStatisticsInMemoryRepository(TimeService timeService) {
     this.timeService = timeService;
   }
 

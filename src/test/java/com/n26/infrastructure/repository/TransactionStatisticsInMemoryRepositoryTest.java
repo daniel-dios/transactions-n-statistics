@@ -15,13 +15,14 @@ import static com.n26.utils.DomainFactoryUtils.createTransaction;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-class TransactionRepositoryInMemoryTest {
+class TransactionStatisticsInMemoryRepositoryTest {
 
   private static final OffsetDateTime TIMESTAMP = OffsetDateTime.parse("2018-07-17T09:59:51.312Z");
   private static final Duration THIRTY_SECONDS = Duration.ofSeconds(30);
 
   private final TimeService timeService = Mockito.mock(TimeService.class);
-  private final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
+  private final TransactionStatisticsInMemoryRepository
+      repositoryInMemory = new TransactionStatisticsInMemoryRepository(timeService);
 
   @Test
   void shouldSaveOneTransaction() {
@@ -50,7 +51,7 @@ class TransactionRepositoryInMemoryTest {
   @Test
   void shouldMergeTransactionsWhenTheyAreInSameSecond() {
     when(timeService.getCurrentTime()).thenReturn(TIMESTAMP.plus(THIRTY_SECONDS));
-    final TransactionRepositoryInMemory repositoryInMemory = new TransactionRepositoryInMemory(timeService);
+    final TransactionStatisticsInMemoryRepository repositoryInMemory = new TransactionStatisticsInMemoryRepository(timeService);
     final Transaction transaction = createValidTransaction("200.000", TIMESTAMP, 10);
     final Transaction otherTransaction = createValidTransaction("100.00", TIMESTAMP.minus(Duration.ofMillis(10)), 10);
 
