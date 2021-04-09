@@ -1,6 +1,19 @@
 # Transactions statistics - Senior Engineer
 
-## About the challenge
+## 🏃 To run
+
+First, you may need to configure this:
+```
+JAVA_HOME=/Library/Java/JavaVirtualMachines/{your jdk 8 here}/Contents/Home/ 
+```
+
+Then just execute:
+```
+mvn clean install
+mvn clean integration-test
+```
+
+## 🧑‍💻 About the challenge
 
 I see challenge excellent, transactions contexts, some maths (accuracy) problems, concurrency, and Big O thing 😬.
 I've applied domain-driven design with hexagonal architecture (use case, domain, and infra). Also, I've followed TDD,
@@ -69,6 +82,7 @@ What happen if there is no more saves in a certain time window? Well, the map wo
 
 As mentioned, I'm a big TDD fan, so every code line was made after a test failing. I've used/added junit 5 (we should update this skeleton challenge).
 There is also contract tests for controllers (with spring boot test and mockMvc).
+You could disagree on how I'm testing the in memory repository: I'm using save and get to test each other, but I didn't want to use reflections to get the map since is private or creating a public method only for testing purposes.
 
 ## 🚀 CI
 
@@ -85,3 +99,14 @@ For going to production yes, but I see both things out of the scope of this chal
 - If "it-tests" were not present (thanks again 🤗), I'd like to have test/s dockerizing 🚢 the application and testing from outside as "end to end" tests but,
   I see "too much over-engineering" adding this to the solution.
   
+## 🔁 Feedback
+
+As I mentioned, I see the problem challenging, and I've enjoyed solving and coding it a lot.
+I see this two lines of improvement:
+
+- I'd like to have at least java11, junit5, and a mvn wrapper.
+  
+
+- Since I'm using GitHub actions to test and build the project maybe it could be helpful for reviewers going to the repo instead of opening my .zip submitted.
+
+Thanks!
